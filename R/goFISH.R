@@ -3,7 +3,7 @@
 #' @param table A table with values created via ruMake()
 #' @return Launch Gone mFISHing shiny app
 #'
-#' @import shiny shinyWidgets umap ggplot2 shinydashboard dashboardthemes tidyr dplyr DT here shinythemes
+#' @import shiny shinyWidgets umap ggplot2 shinydashboard dashboardthemes tidyr dplyr DT here shinythemes shinybusy
 #'
 #' @export
 goFISH <- function(table) {
@@ -48,6 +48,13 @@ goFISH <- function(table) {
         tabItem(tabName = "rgene",
                   shiny::fluidPage(
                   theme = shinythemes::shinytheme("cyborg"),
+                  #progress bar
+                  use_busy_bar(color = "magenta", height = "25px"),
+                  use_busy_gif(
+                    src = "https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif?1563480763",
+                    height = 70, width = 70
+                  ),
+
                   # Title of this page
                   titlePanel("Raw Gene Expression - Gone mFISHing"),
 
@@ -97,6 +104,8 @@ goFISH <- function(table) {
         shinydashboard::tabItem(tabName = "hclust",
                   shiny::fluidPage(
                   theme = shinythemes::shinytheme("cyborg"),
+                  #progress bar
+                  use_busy_bar(color = "magenta", height = "25px"),
                   # Title of current page
                   shiny::titlePanel("Clustered Gene Expression - Gone mFISHing"),
 
@@ -143,6 +152,9 @@ goFISH <- function(table) {
   ## Define server logic required to plot
   server <- function(input, output) {
 
+    #update
+    update_busy_bar(0)
+    play_gif()
 
     #reactive gene name list
     mygenes <- shiny::reactive({
@@ -215,14 +227,6 @@ goFISH <- function(table) {
       clus.data
     })
 
-    #choose the data to plot as grey points
-    plotNum <- shiny::reactive({
-      i <- 1
-      while(data.file() != datafiles[i]){
-        i <- i+1
-      }
-      i
-    })
 
     #render table on main page
     output$table <- renderDataTable(
@@ -276,11 +280,12 @@ goFISH <- function(table) {
       sgp
     })
 
+    stop_gif()
+
     #by cluster
     scplot <- shiny::reactive({
-      cd <- forLayers[[plotNum()]]
       scplot <- ggplot2::ggplot(long.data(), aes(x=X, y=Y, colour = cluster))+
-        geom_point(data = cd, colour = "grey")+
+        geom_point(data = forLayers, colour = "grey")+
         geom_point()+
         theme_bw()+
         theme(plot.background = element_rect(fill = "transparent", color = NA))+
