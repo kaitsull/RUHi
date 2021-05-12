@@ -5,9 +5,9 @@
 #' @param alpha *numeric* ransparency of individual cell data points. If <=0, turns individual points off. If =1, points full opaque.
 #' @return ggplot of clustered data
 #'
+#' @import ggplot2
 #'
-#'
-
+#' @export
 plotViolin <- function(theGene,doNorm=F,alpha=0.2){
   # select data to plot
   if(doNorm){

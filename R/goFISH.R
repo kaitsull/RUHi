@@ -2,26 +2,14 @@
 #'
 #' @param table A table with values created via ruMake()
 #' @return Launch Gone mFISHing shiny app
-#' @examples
-#' ruFishing(myTable)
 #'
+#' @import shiny shinyWidgets umap ggplot2 shinydashboard dashboardthemes tidyr dplyr DT here shinythemes
 #'
+#' @export
 goFISH <- function(table) {
   #Kaitlin Sullivan November 2020
   #This shiny app allows the naive scientist to browse and visualize analyzed
   #mFISH data in a user-friendly way
-
-  library(shiny)
-  library(shinyWidgets)
-  library(umap)
-  library(ggplot2)
-  library(shinydashboard)
-  library(dashboardthemes)
-  library(tidyr)
-  library(dplyr)
-  library(DT)
-  library(here)
-  library(shinythemes)
 
 
   # load the known quantified mFISH data
@@ -34,12 +22,12 @@ goFISH <- function(table) {
   forLayers <- table
 
 
-  ui <- dashboardPage(
+  ui <- shinydashboard::dashboardPage(
     #dashboard header
-    dashboardHeader(title = "Gone mFISHing"),
+    shinydashboard::dashboardHeader(title = "Gone mFISHing"),
 
     #Create dashboard sidebar
-    dashboardSidebar(
+    shinydashboard::dashboardSidebar(
       sidebarMenu(
         #visualizing individual gene expression
         menuItem("Raw Gene Expression", tabName = "rgene", icon = icon("brain")),
@@ -49,7 +37,7 @@ goFISH <- function(table) {
     ),
 
     #Create a dashboard
-    dashboardBody(
+    shinydashboard::dashboardBody(
 
       # change theme
       dashboardthemes::shinyDashboardThemes(theme = "grey_dark"),
@@ -58,14 +46,14 @@ goFISH <- function(table) {
       tabItems(
         # Visualizing individual gene expression
         tabItem(tabName = "rgene",
-                fluidPage(
-                  theme = shinytheme("cyborg"),
+                  shiny::fluidPage(
+                  theme = shinythemes::shinytheme("cyborg"),
                   # Title of this page
                   titlePanel("Raw Gene Expression - Gone mFISHing"),
 
                   # Sidebar with dropdown menu of genes to select
-                  sidebarLayout(
-                    sidebarPanel(
+                  shiny::sidebarLayout(
+                    shiny::sidebarPanel(
                       #sidebar heading number 2 with info on clustering
                       h4("Explore raw,individual gene expression:"),
                       br(),
@@ -79,42 +67,42 @@ goFISH <- function(table) {
                       textInput("filter", "Input value to filter Slc17a7/Gad1 by:", value = "3"),
                       br(),
                       #creates a reactive dropdown menu contd in server
-                      uiOutput("geneIn"),
+                      shiny::uiOutput("geneIn"),
                       br(),
-                      checkboxInput("flipxS", "Flip X Axis",
+                      shiny::checkboxInput("flipxS", "Flip X Axis",
                                     value = FALSE),
-                      checkboxInput("flipyS", "Flip Y Axis",
+                      shiny::checkboxInput("flipyS", "Flip Y Axis",
                                     value = FALSE),
-                      checkboxInput("rotateS", "Rotate 90 degrees",
+                      shiny::checkboxInput("rotateS", "Rotate 90 degrees",
                                     value = FALSE)
                     ),
 
                     # Visualization tabs
-                    mainPanel(
-                      tabsetPanel(
+                    shiny::mainPanel(
+                      shiny::tabsetPanel(
                         #view by spatial location
-                        tabPanel("Spatial Location", plotOutput("spaceGenePlot"), downloadButton("downSpacegne")),
+                        shiny::tabPanel("Spatial Location", plotOutput("spaceGenePlot"), downloadButton("downSpacegne")),
                         #view by umap coloured by quantity of gene expression
-                        tabPanel("Dimensionality Reduction", plotOutput("umapGene"), downloadButton("downUgne")),
+                        shiny::tabPanel("Dimensionality Reduction", plotOutput("umapGene"), downloadButton("downUgne")),
                         #expression of individual gene in clusters
-                        tabPanel("Expression by Cluster", plotOutput("genevln"), downloadButton("downgVln")),
+                        shiny::tabPanel("Expression by Cluster", plotOutput("genevln"), downloadButton("downgVln")),
                         #plot the expression of all genes present
-                        tabPanel("Expression of All Genes", plotOutput("plotall"), downloadButton("downAll"))
+                        shiny::tabPanel("Expression of All Genes", plotOutput("plotall"), downloadButton("downAll"))
                       )
                     )
                   )
                 )
         ),
         #tab for clustered data
-        tabItem(tabName = "hclust",
-                fluidPage(
-                  theme = shinytheme("cyborg"),
+        shinydashboard::tabItem(tabName = "hclust",
+                  shiny::fluidPage(
+                  theme = shinythemes::shinytheme("cyborg"),
                   # Title of current page
-                  titlePanel("Clustered Gene Expression - Gone mFISHing"),
+                  shiny::titlePanel("Clustered Gene Expression - Gone mFISHing"),
 
                   # Sidebar with a slider input for number of clusters to create
-                  sidebarLayout(
-                    sidebarPanel(
+                  shiny::sidebarLayout(
+                    shiny::sidebarPanel(
                       h4("Explore visualization of hierarchically clustered expression data:"),
                       br(),
                       #Select the threshold for number of clusters to divide data by using hierarchical clustering
@@ -125,19 +113,19 @@ goFISH <- function(table) {
                         selected = 4
                       ),
                       br(),
-                      checkboxInput("flipxC", "Flip X Axis",
+                      shiny::checkboxInput("flipxC", "Flip X Axis",
                                     value = FALSE, ),
-                      checkboxInput("flipyC", "Flip Y Axis",
+                      shiny::checkboxInput("flipyC", "Flip Y Axis",
                                     value = FALSE, ),
-                      checkboxInput("rotateC", "Rotate 90 degrees",
+                      shiny::checkboxInput("rotateC", "Rotate 90 degrees",
                                     value = FALSE)
                     ),
                     #tab panel of options for: xy space, dim reduction space, summary of mean expression per cluster
-                    mainPanel(
-                      tabsetPanel(
-                        tabPanel("Spatial Location", plotOutput("spaceClusPlot"), downloadButton("downSpaceClus")),
-                        tabPanel("Dimensionality Reduction", plotOutput("umapClus"), downloadButton("downUclus")),
-                        tabPanel("Gene Expression per Cluster", plotOutput("vln"), downloadButton("downVln"))
+                    shiny::mainPanel(
+                      shiny::tabsetPanel(
+                        shiny::tabPanel("Spatial Location", plotOutput("spaceClusPlot"), downloadButton("downSpaceClus")),
+                        shiny::tabPanel("Dimensionality Reduction", plotOutput("umapClus"), downloadButton("downUclus")),
+                        shiny::tabPanel("Gene Expression per Cluster", plotOutput("vln"), downloadButton("downVln"))
                       )
                     )
                   )
@@ -158,7 +146,7 @@ goFISH <- function(table) {
 
     #create hierarchical clustering based on input
     #raw info with meta data
-    data.file <- reactive({
+    data.file <- shiny::reactive({
       #if(input$dataset != datafiles[1]){
       data.file <- read.csv(here::here("data", input$dataset))
       #}
@@ -169,7 +157,7 @@ goFISH <- function(table) {
     })
 
     #reactive gene name list
-    mygenes <- reactive({
+    mygenes <- shiny::reactive({
       df <- data.file()
       mygenes <- dplyr::select(df, -c(X.1,X1,X,Y))
       if(input$ei == "Excitatory"){
@@ -183,12 +171,12 @@ goFISH <- function(table) {
     })
 
     #select genes from user id dataset
-    output$geneIn <- renderUI({
-      selectInput('geneNames', 'Select A Gene...', mygenes())
+    output$geneIn <- shiny::renderUI({
+      shiny::selectInput('geneNames', 'Select A Gene...', mygenes())
     })
 
 
-    data.filter <- reactive({
+    data.filter <- shiny::reactive({
       data.filter <- data.file()
       if(input$ei == "Excitatory"){
         data.filter <- dplyr::filter(data.filter, Slc17a7 > input$filter)
@@ -202,7 +190,7 @@ goFISH <- function(table) {
     })
 
     #normalize data
-    data.norm <- reactive({
+    data.norm <- shiny::reactive({
       data.norm <- data.filter()
       #select only gene names
       data.norm <- dplyr::select(data.norm, mygenes())
@@ -213,7 +201,7 @@ goFISH <- function(table) {
     })
 
     #create a column of umap coords
-    umap.data <- reactive({
+    umap.data <- shiny::reactive({
       df <- data.filter()
       #umap normalized data
       coord <- umap::umap(data.norm())
@@ -226,7 +214,7 @@ goFISH <- function(table) {
     })
 
     #create hierarchical clustering based on input
-    clus.data <- reactive({
+    clus.data <- shiny::reactive({
       #save data frame with only genes
       df <- dplyr::select(umap.data(), mygenes())
       #create hclust object
@@ -240,7 +228,7 @@ goFISH <- function(table) {
     })
 
     #choose the data to plot as grey points
-    plotNum <- reactive({
+    plotNum <- shiny::reactive({
       i <- 1
       while(data.file() != datafiles[i]){
         i <- i+1
@@ -249,13 +237,13 @@ goFISH <- function(table) {
     })
 
     #render table on main page
-    output$table <- DT::renderDataTable(
-      DT::datatable(
+    output$table <- renderDataTable(
+      datatable(
         clus.data(), options = list(scrollX = TRUE)
       ))
 
     #lengthen data
-    long.data <- reactive({
+    long.data <- shiny::reactive({
       long.data <- clus.data()
       long.data <- tidyr::pivot_longer(long.data,
                                        cols = -c(X, Y, umap1, umap2, cluster),
@@ -265,14 +253,14 @@ goFISH <- function(table) {
     })
 
     #filter data by gene input
-    gene.data <- reactive({
-      gene.data <- dplyr::filter(long.data(), Gene == input$geneNames)
+    gene.data <- shiny::reactive({
+      gene.data <- filter(long.data(), Gene == input$geneNames)
       gene.data
     })
 
     #plots in original X, Y space
     #by gene
-    sgplot <- reactive({
+    sgplot <- shiny::reactive({
       sgplot <- ggplot2::ggplot(gene.data(), aes(x=X, y=Y, colour = Quant))+
         geom_point()+
         theme_bw()+
@@ -294,14 +282,14 @@ goFISH <- function(table) {
       }
     })
 
-    output$spaceGenePlot <- renderPlot({
+    output$spaceGenePlot <- shiny::renderPlot({
       #colours graded amount of expression on dataset filtered to only contain inputted gene data
       sgp <- sgplot()
       sgp
     })
 
     #by cluster
-    scplot <- reactive({
+    scplot <- shiny::reactive({
       cd <- forLayers[[plotNum()]]
       scplot <- ggplot2::ggplot(long.data(), aes(x=X, y=Y, colour = cluster))+
         geom_point(data = cd, colour = "grey")+
@@ -324,14 +312,14 @@ goFISH <- function(table) {
       }
     })
 
-    output$spaceClusPlot <- renderPlot({
+    output$spaceClusPlot <- shiny::renderPlot({
       #plot data in space, coloured by cluster in individual plots
       scp <- scplot()
       scp
     })
 
     #plot in dimensionally reduced space (via umap)
-    ugplot <- reactive({
+    ugplot <- shiny::reactive({
       #plot graded gene expression for "raw" gene data
       ugplot <- ggplot2::ggplot(gene.data(), aes(x=umap1, y=umap2, colour = Quant))+
         geom_point()+
@@ -342,13 +330,13 @@ goFISH <- function(table) {
         labs(title = input$geneNames, colour=input$geneNames)
     })
 
-    output$umapGene <- renderPlot({
+    output$umapGene <- shiny::renderPlot({
       ugp <- ugplot()
       ugp
     })
 
     #plot in dimensionally reduced space (via umap)
-    ucplot <- reactive({
+    ucplot <- shiny::reactive({
       #plot umap coloured by cluster
       ucplot <- ggplot2::ggplot(clus.data(), aes(x=umap1, y=umap2, colour = cluster))+
         geom_point()+
@@ -357,12 +345,12 @@ goFISH <- function(table) {
               aspect.ratio=1)
     })
 
-    output$umapClus <- renderPlot({
+    output$umapClus <- shiny::renderPlot({
       ucp <- ucplot()
       ucp
     })
 
-    allplot <- reactive({
+    allplot <- shiny::reactive({
       allplot <- ggplot(long.data(), aes(x=X, y=Y, colour = Quant))+
         geom_point(data = data.file(), colour = "light blue")+
         geom_point(size = 0.5)+
@@ -392,7 +380,7 @@ goFISH <- function(table) {
 
     #violin plot by cluster
     # simplified violin plot code by Mark Cembrowski
-    vplot <- reactive({
+    vplot <- shiny::reactive({
       vln.data <- long.data()
       vln.data <- group_by(vln.data, Gene)
       # plot
@@ -403,11 +391,11 @@ goFISH <- function(table) {
         facet_wrap(~Gene)
     })
 
-    output$vln <- renderPlot({
+    output$vln <- shiny::renderPlot({
       vln <- vplot()
       vln
     })
-    vgplot <- reactive({
+    vgplot <- shiny::reactive({
       vln.data <- gene.data()
       # plot
       vgplot <- ggplot(vln.data,aes(x=cluster,y=Quant,fill=cluster)) +
@@ -417,7 +405,7 @@ goFISH <- function(table) {
         labs(title = input$geneNames)
     })
 
-    output$genevln <- renderPlot({
+    output$genevln <- shiny::renderPlot({
       vlnG <- vgplot()
       vlnG
     })

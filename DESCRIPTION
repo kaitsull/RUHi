@@ -9,8 +9,9 @@ Authors@R:
            comment = c(ORCID = "0000-0001-8043-7111"))
 Description: This package allows for the analysis and visualization of multiplexed FISH data, as well as the intergration of this data with scRNA-seq data.
 License: MIT + file LICENSE
-Suggests: 
-    testthat
+Imports: 
+    testthat, shiny, shinyWidgets, umap, Rtsne, ggplot2, shinydashboard,
+    dashboardthemes, tidyr, dplyr, DT, here, shinythemes, reshape2, utils, stats
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

@@ -3,19 +3,14 @@
 #' @param anm *character vector.* If length>0, select only the animals present in this vector.
 #' @param reg *character vector.* If length>0, select only the regions ant','int','pos' present in this vector.
 #' @param excThres *numeric* Slc17a7 cutoff value for removing non-excitatory cells.
-#' @param clust *numeric* Number of clusters
+#' @param nClust *numeric* Number of clusters
 #' @param perplexity *numeric* Perplexity of tSNE visualization.
 #' @return A normalized dataframe containing the quantified mFISH.
 #'
+#' @import ggplot2 reshape2 Rtsne umap
 #'
-#'
-
+#' @export
 loadData <- function(anm=c(),reg=c(),excThres=1e-5,nClust=4,perplexity=30){
-  # load packages
-  library(reshape2)
-  library(ggplot2)
-  library(Rtsne)
-  library(umap)
   # load raw data (henceforth, rData)
   rData <- read.table('allCla.txt',sep='\t',header=T)
   # print number of initial cells

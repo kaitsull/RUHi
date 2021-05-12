@@ -3,9 +3,9 @@
 #' @param xy *character* if =='umap', plot via UMAP dim reduction / if =='tsne', plot via TSNE dim reduction / if =='geog' (or anything else) plot via spatial (geographical) coords
 #' @return ggplot of clustered data
 #'
+#' @import ggplot2
 #'
-#'
-
+#' @export
 plotCluster <- function(xy='geog'){
   # select cluster ID
   pData <- data.frame(clust=mData$clust)

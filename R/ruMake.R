@@ -7,6 +7,7 @@
 #'
 #'
 #'
+#' @export
 ruMake <- function(dir, region = NA, id = NA) {
   i<-1
   filelist = list.files(pattern = "_quantification.csv$")
