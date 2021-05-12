@@ -15,22 +15,25 @@ ruMake <- function(dir, region = NA, id = NA) {
   print(filelist)
 
   #initialize hiplex dataframe with cell # and X, Y position
-  geneData <- read_csv(filelist[i])
-  hiPlex <- select(geneData, X, Y, X1)
+  geneData <- read.csv(filelist[i])
+  hiPlex <- select(geneData, X, Y)
 
   #linear or non linear
-  if(grep("nl.tif",filelist[1])>0){
-    del <- 44
+  if(length(grep("nl.tif",filelist[1]))==0){
+    del <- 38
+  }
+  else if(length(grep("nonlinear",filelist[1])==0)){
+    del <- 77
   }
   else{
-    del <- 38
+    del <- 43
   }
 
   while(i<(length(filelist)+1)){
     #extract gene name from file name
     cur <- filelist[i]
     geneName <- substr(cur, 8, (nchar(cur)-del))
-    geneData <- read_csv(cur)
+    geneData <- read.csv(cur)
 
     #User-selected filtering of real vs unreal signal
     hiPlex <- mutate(hiPlex, !!geneName := (geneData$Mean/geneData$Area)*255)
