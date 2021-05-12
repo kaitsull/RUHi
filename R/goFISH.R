@@ -13,7 +13,7 @@ goFISH <- function(table) {
 
 
   # load the known quantified mFISH data
-  datafiles <- table
+  table <- table
   #datafiles <- append(datafiles, "Upload New Dataset", after = 0)
   types <- c("Raw Expression", "Hierarchical Clustering")
   cellType <- c("All Cells", "Excitatory", "Inhibitory")
@@ -144,21 +144,9 @@ goFISH <- function(table) {
   server <- function(input, output) {
 
 
-    #create hierarchical clustering based on input
-    #raw info with meta data
-    data.file <- shiny::reactive({
-      #if(input$dataset != datafiles[1]){
-      data.file <- read.csv(here::here("data", input$dataset))
-      #}
-      # else{
-      #     data <- NULL
-      # }
-      data.file
-    })
-
     #reactive gene name list
     mygenes <- shiny::reactive({
-      df <- data.file()
+      df <- table
       mygenes <- dplyr::select(df, -c(X,Y))
       if(input$ei == "Excitatory"){
         mygenes <- dplyr::select(mygenes, -Slc17a7)
@@ -177,7 +165,7 @@ goFISH <- function(table) {
 
 
     data.filter <- shiny::reactive({
-      data.filter <- data.file()
+      data.filter <- table
       if(input$ei == "Excitatory"){
         data.filter <- dplyr::filter(data.filter, Slc17a7 > input$filter)
         data.filter <- dplyr::select(data.filter, -Slc17a7)
@@ -352,7 +340,7 @@ goFISH <- function(table) {
 
     allplot <- shiny::reactive({
       allplot <- ggplot(long.data(), aes(x=X, y=Y, colour = Quant))+
-        geom_point(data = data.file(), colour = "light blue")+
+        geom_point(data = table, colour = "light blue")+
         geom_point(size = 0.5)+
         theme_bw()+
         theme(plot.background = element_rect(fill = "transparent", color = NA))+
