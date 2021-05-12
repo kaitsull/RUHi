@@ -159,7 +159,7 @@ goFISH <- function(table) {
     #reactive gene name list
     mygenes <- shiny::reactive({
       df <- data.file()
-      mygenes <- dplyr::select(df, -c(X.1,X1,X,Y))
+      mygenes <- dplyr::select(df, -c(X,Y))
       if(input$ei == "Excitatory"){
         mygenes <- dplyr::select(mygenes, -Slc17a7)
       }
