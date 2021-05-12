@@ -20,37 +20,24 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/RUHi)](https://CRAN.R-project.org/package=RUHi)
 <!-- badges: end -->
 
-The goal of RUHi is to ...
+The goal of RUHi is to analyze and visualize mFISH spatial transcriptomic data!
 
 ## Installation
 
 You can install RUHi from this github repo with:
 
 ``` r
-install.packages("RUHi")
+install_github("kaitsull/RUHi")
 ```
 
-## Example
+## Examples
 
-This is a basic example which shows you how to solve a common problem:
+Currently the package has 2 functions:
+`ruMake`  
+- creates a table containing all of the quantified genes  
+  
+`goFISH`  
+- launches the gone mFISHing shiny app (must use table generated via ruMake)
 
-```{r example}
-library(RUHi)
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+Plus the original functions by Mark Cembrowski:
+`loadData`, `plotCluster`, `plotGene`, `plotViolin`

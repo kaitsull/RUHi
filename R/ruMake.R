@@ -4,8 +4,7 @@
 #' @param region A character string with the name of the tissue region imaged.
 #' @param id Animal number or unique identifier for tissue sample.
 #' @return A dataframe containing the quantified mFISH data of all channels present.
-#' @examples
-#' makeObject(dir = here(), region = "anterior_hippocampus", id = "123456")
+#'
 #'
 #'
 ruMake <- function(dir, region = NA, id = NA) {
