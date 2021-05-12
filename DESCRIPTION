@@ -2,12 +2,12 @@ Package: RUHi
 Title: R-based Utilities for Hiplex
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Kaitlin",
+           family = "Sullivan",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "kaitlin.sullivan@ubc.ca",
+           comment = c(ORCID = "0000-0001-8043-7111")),
+Description: This package allows for the analysis and visualization of multiplexed FISH data, as well as the intergration of this data with scRNA-seq data.
 License: MIT + file LICENSE
 Suggests: 
     testthat

@@ -24,7 +24,7 @@ The goal of RUHi is to ...
 
 ## Installation
 
-You can install the released version of RUHi from [CRAN](https://CRAN.R-project.org) with:
+You can install RUHi from this github repo with:
 
 ``` r
 install.packages("RUHi")
