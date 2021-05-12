@@ -49,10 +49,11 @@ goFISH <- function(table) {
                   shiny::fluidPage(
                   theme = shinythemes::shinytheme("cyborg"),
                   #progress bar
-                  use_busy_bar(color = "magenta", height = "25px"),
-                  use_busy_gif(
+                  add_busy_gif(
                     src = "https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif?1563480763",
-                    height = 70, width = 70
+                    height = 70, width = 70,
+                    timeout = 10,
+                    position = "full-page"
                   ),
 
                   # Title of this page
@@ -104,10 +105,16 @@ goFISH <- function(table) {
         shinydashboard::tabItem(tabName = "hclust",
                   shiny::fluidPage(
                   theme = shinythemes::shinytheme("cyborg"),
-                  #progress bar
-                  use_busy_bar(color = "magenta", height = "25px"),
+
                   # Title of current page
                   shiny::titlePanel("Clustered Gene Expression - Gone mFISHing"),
+
+                  add_busy_gif(
+                    src = "https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif?1563480763",
+                    height = 70, width = 70,
+                    timeout = 10,
+                    position = "full-page"
+                  ),
 
                   # Sidebar with a slider input for number of clusters to create
                   shiny::sidebarLayout(
@@ -152,9 +159,6 @@ goFISH <- function(table) {
   ## Define server logic required to plot
   server <- function(input, output) {
 
-    #update
-    update_busy_bar(0)
-    play_gif()
 
     #reactive gene name list
     mygenes <- shiny::reactive({
@@ -169,6 +173,7 @@ goFISH <- function(table) {
       mygenes <- names(mygenes)
       mygenes
     })
+
 
     #select genes from user id dataset
     output$geneIn <- shiny::renderUI({
@@ -186,6 +191,7 @@ goFISH <- function(table) {
         data.filter <- dplyr::filter(data.filter, Gad1 > input$filter)
         data.filter <- dplyr::select(data.filter, -Gad1)
       }
+      update_busy_bar(25)
       data.filter
     })
 
@@ -219,6 +225,7 @@ goFISH <- function(table) {
       df <- dplyr::select(umap.data(), mygenes())
       #create hclust object
       clust <- hclust(d = dist(df), method = "ward.D2")
+      update_busy_bar(60)
       #cut tree at inputted number of clusters
       newcol <- cutree(clust, k = input$clus)
       #create a new column called cluster with the values
@@ -228,11 +235,6 @@ goFISH <- function(table) {
     })
 
 
-    #render table on main page
-    output$table <- renderDataTable(
-      datatable(
-        clus.data(), options = list(scrollX = TRUE)
-      ))
 
     #lengthen data
     long.data <- shiny::reactive({
@@ -274,13 +276,17 @@ goFISH <- function(table) {
       }
     })
 
+
     output$spaceGenePlot <- shiny::renderPlot({
       #colours graded amount of expression on dataset filtered to only contain inputted gene data
+      play_gif()
       sgp <- sgplot()
+      update_busy_bar(100)
+      stop_gif()
       sgp
     })
 
-    stop_gif()
+
 
     #by cluster
     scplot <- shiny::reactive({
