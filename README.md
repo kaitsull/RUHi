@@ -1,27 +1,20 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
-
 # RUHi ![](https://emojis.slackmojis.com/emojis/images/1563480763/5999/meow_party.gif?1563480763)
+
 #### R-based Utilities for HiPlex
+
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/RUHi)](https://CRAN.R-project.org/package=RUHi)
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/RUHi)](https://CRAN.R-project.org/package=RUHi)
 <!-- badges: end -->
 
-The goal of RUHi is to analyze and visualize mFISH! 
-Stay tuned for exciting features such as *integration with scRNA-seq data*!
+The goal of RUHi is to analyze and visualize mFISH\! Stay tuned for
+exciting features such as *integration with scRNA-seq data*\!
 
 ## Installation
 
@@ -32,41 +25,42 @@ devtools::install_github("kaitsull/RUHi")
 ```
 
 Once installed, load the package normally:
+
 ``` r
 library(RUHi)
 ```
 
-
 ## Function List
 
-Currently the package has 2 functions:  
- 
-### `ruMAKE`    
-- takes quantified tables from FIJI and combines them into a table for analysis    
-    
-### `goFISH`    
-- launches the gone mFISHing shiny app (**NOTE**: must use table generated via ruMake)  
-  
-  
+Currently the package has 2 functions:
+
+### `ruMAKE`
+
+  - takes quantified tables from FIJI and combines them into a table for
+    analysis
+
+### `goFISH`
+
+  - launches the gone mFISHing shiny app (**NOTE**: must use table
+    generated via ruMake)
+
 ##### Plus original functions by Mark Cembrowski:
+
 `loadData`, `plotCluster`, `plotGene`, `plotViolin`
 
-  
-  
 You can also access function documentation via:
 
-```r
+``` r
 help(goFISH())
 
 #or
 
 ?goFISH()
 ```
-  
-  
-  
+
 ## Test Code
-```r
+
+``` r
 # TEST OUT THE PACKAGE PLS
 # Kaitlin 2021
 
@@ -101,5 +95,4 @@ head(mydata)
 #   ?goFISH   (in the console)
 #PLZ NOTE: the dancing cat means its loading - it can be slow at first!
 goFISH(mydata)
-
 ```
