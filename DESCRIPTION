@@ -6,7 +6,7 @@ Authors@R:
            family = "Sullivan",
            role = c("aut", "cre"),
            email = "kaitlin.sullivan@ubc.ca",
-           comment = c(ORCID = "0000-0001-8043-7111")),
+           comment = c(ORCID = "0000-0001-8043-7111"))
 Description: This package allows for the analysis and visualization of multiplexed FISH data, as well as the intergration of this data with scRNA-seq data.
 License: MIT + file LICENSE
 Suggests: 
