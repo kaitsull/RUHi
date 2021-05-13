@@ -19,10 +19,10 @@ ruMake <- function(dir, region = NA, id = NA) {
   hiPlex <- select(geneData, X, Y)
 
   #linear or non linear
-  if(length(grep("nl.tif",filelist[1]))==0){
+  if(length(grep("_NL.tif",filelist[1]))==0){
     del <- 38
   }
-  else if(length(grep("nonlinear",filelist[1])==0)){
+  else if(length(grep("rigid",filelist[1])==0)){
     del <- 77
   }
   else{
