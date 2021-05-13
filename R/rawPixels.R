@@ -36,12 +36,7 @@ rawPixels <- function() {
     hiPlex <- mutate(hiPlex, !!geneName := (geneData$Mean/255)*geneData$Area)
     i<-i+1
   }
-  if(is.na(region) | is.na(id)){
-    title = "HiPlex.csv"
-  }
-  else{
-    title = paste(region, "_", id, ".csv", sep = "")
-  }
+
   #write .csv
   write.csv(hiPlex,'pixtable.csv')
   #return dataframe
