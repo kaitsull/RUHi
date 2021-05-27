@@ -16,7 +16,9 @@ goFISH <- function(table) {
   table <- table
   #datafiles <- append(datafiles, "Upload New Dataset", after = 0)
   types <- c("Raw Expression", "Hierarchical Clustering")
-  cellType <- c("All Cells", "Excitatory", "Inhibitory")
+  #cellType <- c("All Cells", "Excitatory", "Inhibitory")
+  filgenes <- select(table, -c(X,Y))
+  filgenes <- c("No Filter",names(filgenes))
 
   #temp use for grey dot bgs
   forLayers <- table
@@ -68,11 +70,11 @@ goFISH <- function(table) {
                       #filter
                       selectInput(
                         "ei",
-                        "Filter by cell types?",
-                        choices = cellType,
-                        selected = cellType[1]
+                        "Filter by marker gene?",
+                        choices = filgenes,
+                        selected = filgenes[1]
                       ),
-                      textInput("filter", "Input value to filter Slc17a7/Gad1 by:", value = "3"),
+                      textInput("filter", "Threshold value for filtering:", value = "2"),
                       br(),
                       #creates a reactive dropdown menu contd in server
                       shiny::uiOutput("geneIn"),
@@ -164,11 +166,8 @@ goFISH <- function(table) {
     mygenes <- shiny::reactive({
       df <- table
       mygenes <- dplyr::select(df, -c(X,Y))
-      if(input$ei == "Excitatory"){
-        mygenes <- dplyr::select(mygenes, -Slc17a7)
-      }
-      if(input$ei == "Inhibitory"){
-        mygenes <- dplyr::select(mygenes, Gad1)
+      if(input$ei != filgenes[1]){
+        mygenes <- dplyr::select(mygenes, -input$ei)
       }
       mygenes <- names(mygenes)
       mygenes
@@ -183,15 +182,10 @@ goFISH <- function(table) {
 
     data.filter <- shiny::reactive({
       data.filter <- table
-      if(input$ei == "Excitatory"){
-        data.filter <- dplyr::filter(data.filter, Slc17a7 > input$filter)
-        data.filter <- dplyr::select(data.filter, -Slc17a7)
+      if(input$ei != filgenes[1]){
+        data.filter <- dplyr::filter(data.filter, input$ei > input$filter)
+        data.filter <- dplyr::select(data.filter, -input$ei)
       }
-      if(input$ei == "Inhibitory"){
-        data.filter <- dplyr::filter(data.filter, Gad1 > input$filter)
-        data.filter <- dplyr::select(data.filter, -Gad1)
-      }
-      update_busy_bar(25)
       data.filter
     })
 
