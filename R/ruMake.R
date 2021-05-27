@@ -10,7 +10,7 @@
 #' @export
 ruMake <- function(dir, region = NA, id = NA) {
   i<-1
-  filelist = list.files(pattern = "_quantification.csv$")
+  filelist = list.files(path = dir, pattern = "_quantification.csv$")
   print('The following files will be quantified:')
   print(filelist)
 
@@ -26,7 +26,7 @@ ruMake <- function(dir, region = NA, id = NA) {
     del <- 77
   }
   else{
-    del <- 43
+    del <- 50
   }
 
   while(i<(length(filelist)+1)){
@@ -46,7 +46,7 @@ ruMake <- function(dir, region = NA, id = NA) {
     title = paste(region, "_", id, ".csv", sep = "")
   }
   #write .csv
-  write.csv(hiPlex,'HiPlex_QuantificationTable.csv')
+  write.csv(hiPlex, title)
   #return dataframe
   hiPlex
 }

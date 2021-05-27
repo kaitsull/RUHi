@@ -1,0 +1,145 @@
+---
+title: "HiPlexMenu_v2.0"
+output: html_document
+---
+# Welcome to the Documentation for the Fiji Macro Menu for HiPlex Analysis!
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/happyhippocampus.png?raw=true)
+
+# Table of Contents
+1. [Installation](#installation)
+2. [File Set-up](#filesetup)
+3. [Registration](#registration)
+4. [Segmentation](#segmentation)
+5. [Quantification](#quantification)
+6. [HiPlex Overlay](#hiplexoverlay)
+7. [Single Channel](#singlechannel)
+8. [Built-in Fiji Functions](#built-infijifunctions)
+
+
+## 1. Installation <a name="installation"></a>
+Installing the HiPlex Dropdown Menu into Fiji is easy!
+
+- Simply copy and paste the _hiplexMenu.ijm_ code at the bottom of Fiji's _StartupMacros.txt_ and **save**. 
+- **Restart Fiji** and the HiPlex icon will appear.
+
+#### 1. Access _StartupMacros.txt_ from Fiji Menu
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/1Menu-view.png?raw=true)
+
+#### 2. Paste _hiplexMenu.ijm_ text at the end of _StartupMacros.txt_, Save, and Quit Fiji.
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/2Paste-view.png?raw=true)
+
+#### 3. Re-open Fiji and HiPlex Menu will appear
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/3MENU_HP.png?raw=true)
+
+## 2. File Set-up <a name="filesetup"></a>
+The HiPlex Menu functions require specific naming conventions and file organization to run smoothly. 
+Below are the guildlines for how one should organize and name their files.
+
+
+##### a. For classic 3-Plex _in situ_ Hybridization:
+Organize folders in a nested fashion. **Animal Number -> Slide Number -> Section Number -> Raw Images**
+
+All images must be named: **R1_###_genename** Where:
+- R1 denotes that there is only one round of imaging (compared to HiPlex where there are multiple rounds), and 
+- ‘###’ denotes the peak emmission of the fluorophore for each channel. _(For example: DAPI will always be R1_405_DAPI.tif)_
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/4thing.png?raw=true)
+
+##### b. For higher-plex _in situ_ assays:
+All rounds of imaging should be present in your analysis folder.
+All images must be named **RX_###_genename** Where:
+- X = imaging round number, and 
+- ‘###’ denotes the peak emmission of the fluorophore for each channel. _(For example: R3_488_Slc17a7.tif)_
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/5hiplex.png?raw=true)
+
+## 3. Registration <a name="registration"></a>
+#### For multiple rounds of imaging only.
+To use this function:
+- open up the **DAPI signal image** for the **first round of imaging**. 
+- The function will automatically open subsequent rounds and save the registered images in a folder named _regImages_.
+
+##### 1. Open DAPI Round 1
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/7Reg.png?raw=true)
+
+##### 2. Ensure all images from each round are of the same dimensions.
+Including **height, width, stack size**. 
+Errors in registration may occur if images differ significantly in dimensions. 
+Crop all images to be the same size or control for this during image acquisition. I am working to alleviate this issue in an automated fashion.
+
+##### 3. Output:
+###### Before
+![Before Registration](/Fiji_InitialScripts/HiplexDocumentation-Files/5before2.png?raw=true)
+###### After
+![After Registration](/Fiji_InitialScripts/HiplexDocumentation-Files/6After.png?raw=true)
+
+###### Single Plane Images:
+2D registration of all channels saved as a .tif files in _regImages_ folder.
+
+###### Z-Stack Images (under construction):
+3D registration of all channels saved as a _MAX PROJECTION_ .tif file in the _regImages_ folder.
+
+## 4. Segmentation <a name="segmentation"></a>
+
+#### 1. Open DAPI image
+a. **3-Plex**: (Z-stack or single plane) Ensure properly named file: _R1_405_DAPI.tif_
+
+b. **HiPlex**: _DAPI image **must be round 1**_ from the _regImages folder_. Ensure properly named file: _R1_405_DAPI.tif_registered.tif_
+
+#### 2. Draw ROI around region in question
+This allows for the segmentation of only cells in question. To bypass this and select all cells, simply draw a square encompassing the entire image.
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/ROI.png?raw=true)
+
+#### 3. Manually adjust threshold so nuclei are highlighted
+Press **APPLY** in the threshold window first, THEN press **OK** in the "Action Required" window.
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/THresh.png?raw=true)
+
+#### 4. Segmentation in progress will look like this:
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/Progress.png?raw=true)
+
+#### 5. Leave the **ROI Manager** open for _Quantification_
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/ROIMAN.png?raw=true)
+
+## 5. Quantification <a name="quantification"></a>
+Newly updated in _hiplexMenu 2.0_ to automatically threshold and quantify - hands free :)
+
+#### 1. Simply open the first channel image (aka R1_488_XXX)
+The rest will happen automatically within the _regImages_ folder:
+- Quantified tables for importation into R will appear in _analyzedTables_ folder
+- Quantified images for overlay and manual appraisal of thresholding in _analyzedImages_ and _overlay_ folders
+
+Double check that the thresholding is adequate. Some images with poor signal or high autofluorescence may require manual thresholding. To do this, use the **Single Channel** function.
+
+## 6. HiPlex Overlay <a name="hiplexoverlay"></a>
+
+###### UNDER CONSTRUCTION :)
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/happy.png?raw=true)
+
+## 7. Single Channel <a name="singlechannel"></a>
+Similar to the Quantification function, except this function will only quantify a single channel of your choosing.
+
+#### 1. Open the file in Question.
+
+#### 2. Press Single Channel and a threshold slider will appear
+
+###### BAD Thresholding
+
+![](/Fiji_InitialScripts/HiplexDocumentation-Files/badfar.png?raw=true)
+
+###### GOOD Thresholding
+
+![](Fiji_InitialScripts/HiplexDocumentation-Files/goodfar.png?raw=true)
+
+## 8. Built-in Fiji Functions <a name="built-infijifunctions"></a>
+ These are mainly for use by those doing regular, 3-plex _in situ_
+ 
+### Merge Channels…
+For creating a final composite image in 3-plex in situ hybridization. Use this after adjusting the brightness/contrast to remove any background noise.
+
+### Channels Tool
+This allows for easy toggling between composite images with merged channels.
