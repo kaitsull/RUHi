@@ -29,7 +29,7 @@ ruMake <- function(dir, region = NA, id = NA) {
   #  del <- 44
   #}
 
-  del <- 44
+  del <- 45
 
   while(i<(length(filelist)+1)){
     #extract gene name from file name

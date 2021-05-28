@@ -13,15 +13,20 @@ goFISH <- function(table) {
 
 
   # load the known quantified mFISH data
-  table <- table
+  tab <- table
+  if('X.1' %in% names(tab)){
+    tab <- dplyr::select(tab, -X.1)
+  }
   #datafiles <- append(datafiles, "Upload New Dataset", after = 0)
   types <- c("Raw Expression", "Hierarchical Clustering")
   #cellType <- c("All Cells", "Excitatory", "Inhibitory")
-  filgenes <- select(table, -c(X,Y))
+  filgenes <- select(tab, -c(X,Y))
+  selgenes <- names(filgenes)
   filgenes <- c("No Filter",names(filgenes))
 
+
   #temp use for grey dot bgs
-  forLayers <- table
+  forLayers <- tab
 
 
   ui <- shinydashboard::dashboardPage(
@@ -69,7 +74,7 @@ goFISH <- function(table) {
                       br(),
                       #filter
                       selectInput(
-                        "ei",
+                        "mg",
                         "Filter by marker gene?",
                         choices = filgenes,
                         selected = filgenes[1]
@@ -164,12 +169,11 @@ goFISH <- function(table) {
 
     #reactive gene name list
     mygenes <- shiny::reactive({
-      df <- table
-      mygenes <- dplyr::select(df, -c(X,Y))
-      if(input$ei != filgenes[1]){
-        mygenes <- dplyr::select(mygenes, -input$ei)
+      mygenes <- selgenes
+      if(input$mg %in% selgenes){
+        colNum <- match(input$mg, selgenes)
+        mygenes <- selgenes[-colNum]
       }
-      mygenes <- names(mygenes)
       mygenes
     })
 
@@ -181,10 +185,13 @@ goFISH <- function(table) {
 
 
     data.filter <- shiny::reactive({
-      data.filter <- table
-      if(input$ei != filgenes[1]){
-        data.filter <- dplyr::filter(data.filter, input$ei > input$filter)
-        data.filter <- dplyr::select(data.filter, -input$ei)
+      data.filter <- tab
+      e <- paste(input$mg, ">", input$filter)
+      if(input$mg %in% selgenes){
+        data.filter <- dplyr::filter(data.filter, eval(rlang::parse_expr(e)))
+        data.filter <- dplyr::select(data.filter, -input$mg)
+        #colNum <- match(input$mg, names(data.filter))
+        #data.filter <- data.filter[-colNum]
       }
       data.filter
     })
@@ -195,21 +202,29 @@ goFISH <- function(table) {
       #select only gene names
       data.norm <- dplyr::select(data.norm, mygenes())
       #normalize
-      data.norm <- sweep(data.norm, 1,
-                         apply(data.norm, 1, sum), "/")
+      data.norm <- sweep(data.norm, 1,apply(data.norm, 1, sum), "/")
       data.norm
     })
 
     #create a column of umap coords
     umap.data <- shiny::reactive({
       df <- data.filter()
+
+      #remove NAs
+      na.df <- dplyr::mutate(data.norm(), X = df$X, Y=df$Y)
+      na.df <- na.omit(na.df)
+
+      #save new X/Y
+      dimCo <- dplyr::select(na.df, c(X,Y))
+      na.df <- dplyr::select(na.df, -c(X,Y))
+
       #umap normalized data
-      coord <- umap::umap(data.norm())
-      umap.data <- dplyr::mutate(data.norm(),
+      coord <- umap::umap(na.df)
+      umap.data <- dplyr::mutate(na.df,
                                  umap1 = coord$layout[,1],
                                  umap2 = coord$layout[,2],
-                                 X = df$X,
-                                 Y = df$Y)
+                                 X = dimCo$X,
+                                 Y = dimCo$Y)
       umap.data
     })
 
@@ -227,7 +242,6 @@ goFISH <- function(table) {
       #return the reactive object
       clus.data
     })
-
 
 
     #lengthen data
@@ -279,7 +293,6 @@ goFISH <- function(table) {
       stop_gif()
       sgp
     })
-
 
 
     #by cluster
@@ -345,7 +358,7 @@ goFISH <- function(table) {
 
     allplot <- shiny::reactive({
       allplot <- ggplot(long.data(), aes(x=X, y=Y, colour = Quant))+
-        geom_point(data = table, colour = "light blue")+
+        geom_point(data = tab, colour = "light blue")+
         geom_point(size = 0.5)+
         theme_bw()+
         theme(plot.background = element_rect(fill = "transparent", color = NA))+
