@@ -15,7 +15,7 @@ ruMake <- function(dir, region = NA, id = NA) {
   print(filelist)
 
   #initialize hiplex dataframe with cell # and X, Y position
-  geneData <- read.csv(paste(dir, filelist[i], sep = "")
+  geneData <- read.csv(paste(dir, filelist[i], sep = ""))
   hiPlex <- select(geneData, X, Y)
 
   #linear or non linear
