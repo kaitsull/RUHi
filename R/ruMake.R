@@ -15,21 +15,21 @@ ruMake <- function(dir, region = NA, id = NA) {
   print(filelist)
 
   #initialize hiplex dataframe with cell # and X, Y position
-  geneData <- read.csv(filelist[i])
+  geneData <- read.csv(paste(dir, filelist[i], sep = "")
   hiPlex <- select(geneData, X, Y)
 
   #linear or non linear
-  #if(length(grep("_NL.tif",filelist[1]))==0){
-  #  del <- 38
-  #}
-  #else if(length(grep("rigid",filelist[1])==0)){
-  #  del <- 77
-  #}
-  #else{
-  #  del <- 44
-  #}
+  if(length(grep("_NL.tif",filelist[1]))==0){
+    del <- 38
+  }
+  else if(length(grep("rigid",filelist[1])==0)){
+    del <- 77
+  }
+  else{
+    del <- 46
+  }
 
-  del <- 45
+
 
   while(i<(length(filelist)+1)){
     #extract gene name from file name
