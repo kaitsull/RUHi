@@ -1,54 +1,58 @@
-#' Create a dataframe containing quantified mFISH data
+#' Create an mFISH object
 #'
-#' @param dir Directory containing the quantified channel tables.
-#' @param region A character string with the name of the tissue region imaged.
-#' @param id Animal number or unique identifier for tissue sample.
-#' @return A dataframe containing the quantified mFISH data of all channels present.
+#' @param df Dataframe from `ruRead()` or mFISH object.
+#' @param filteredData Dataframe containing the filtered and normalized dataset with id number
+#' @param metadata Dataframe containing metadata
+#' @param attributes List of attributes used in data analysis: `list(filter.by, thresh, umap_nn, umap_mindist, umap_metric, hclust_k, hclust_metric, hclust_p)`
+#' @return An mFISH object.
 #'
 #'
 #'
 #' @export
-ruMake <- function(dir, region = NA, id = NA) {
-  i<-1
-  filelist = list.files(path = dir, pattern = "_quantification.csv$")
-  print('The following files will be quantified:')
-  print(filelist)
+ruMake <- function(df, metadata=NA) {
+  #create mFISH object class
+ mFISH <- setClass(Class='mFISH',
+                  slots=c('rawData'='data.frame', 'filteredData'='list',
+                          'metaData'='data.frame', 'attributes'='list'))
+  #get class of input
+  isDf <- class(df)
+  #check for these values in names
+  checkVal <- c("section", "anum", "region")
 
-  #initialize hiplex dataframe with cell # and X, Y position
-  geneData <- read.csv(paste(dir, filelist[i], sep = ""))
-  hiPlex <- select(geneData, X, Y)
+  #if data.frame - start from scratch
+  if(isDf=='data.frame'){
+    df <- dplyr::select(ruCombine, -c(X,Y))
+    meta <- dplyr::select(ruCombine, c(X,Y))
 
-  #linear or non linear
-  if(length(grep("_NL.tif",filelist[1]))==0){
-    del <- 38
-  }
-  else if(length(grep("rigid",filelist[1])==0)){
-    del <- 77
+    #allocate meta data and raw data to respective slots
+    otherData  <- checkVal %in% names(ruCombine)
+    for(i in 1:length(checkVal)){
+      if(otherData[i]==T){
+        df <- dplyr::select(df, -checkVal[i])
+        meta <- dplyr::select(meta, checkVal[i])
+      }
+    }
+
+    #include other metadata
+    if(!is.na(metadata)){
+      for(i in 1:length(names(metadata))){
+        cur <- names(metadata[i])
+        meta$cur <- metadata$cur
+      }
+    }
+
+    #enter rawData and metaData
+    #leave filterData and attributes for future functions
+    hiPlex <- mFISH(rawData = df, filterData = NA,
+                    metaData = meta,
+                    attributes = list(filter.by=NA, thresh=NA, umap_nn=NA,
+                                  umap_mindist=NA, umap_metric=NA, hclust_k=NA,
+                                  hclust_metric=NA, hclust_p=NA))
+    #return object
+    hiPlex
   }
   else{
-    del <- 46
+    #print error if not a dataframe
+    print("Incorrect class. ruCombine should be a dataframe output from the function ruCombine().")
   }
-
-
-
-  while(i<(length(filelist)+1)){
-    #extract gene name from file name
-    cur <- filelist[i]
-    geneName <- substr(cur, 8, (nchar(cur)-del))
-    geneData <- read.csv(cur)
-
-    #User-selected filtering of real vs unreal signal
-    hiPlex <- mutate(hiPlex, !!geneName := (geneData$Mean/geneData$Area)*255)
-    i<-i+1
-  }
-  if(is.na(region) | is.na(id)){
-    title = "HiPlex.csv"
-  }
-  else{
-    title = paste(region, "_", id, ".csv", sep = "")
-  }
-  #write .csv
-  write.csv(hiPlex, title)
-  #return dataframe
-  hiPlex
 }
