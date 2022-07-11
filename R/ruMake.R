@@ -11,6 +11,8 @@
 #' @import dplyr
 #'
 #' @export
+#'
+#HI :)
 ruMake <- function(df, metadata=NA) {
   print("Creating object...")
   #create mFISH object class
