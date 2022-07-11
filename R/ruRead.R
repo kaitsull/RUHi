@@ -1,4 +1,4 @@
-#' Create a dataframe containing quantified mFISH data
+#' Create and write a dataframe containing quantified mFISH data
 #'
 #' @param dir Directory containing the quantified channel tables.
 #' @param region A character string with the name of the tissue region imaged.
@@ -6,7 +6,7 @@
 #' @param section Section number
 #' @return A dataframe containing the quantified mFISH data of all channels present.
 #'
-#'
+#' @import dplyr
 #'
 #' @export
 ruRead <- function(dir, region = NA, anum = NA, section=NA) {
@@ -16,7 +16,7 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
   print(filelist)
 
   #initialize hiplex dataframe with cell # and X, Y position
-  geneData <- read.csv(paste(dir, filelist[i], sep = ""))
+  geneData <- read.csv(paste(dir, .Platform$file.sep, filelist[i], sep = ""))
   hiPlex <- select(geneData, X, Y)
 
   #linear or non linear

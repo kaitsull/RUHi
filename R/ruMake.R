@@ -1,15 +1,18 @@
 #' Create an mFISH object
 #'
-#' @param df Dataframe from `ruRead()` or mFISH object.
-#' @param filteredData Dataframe containing the filtered and normalized dataset with id number
+#' @author Kaitlin E Sullivan
+#'
+#' @param df Dataframe from `ruRead()` or `ruCombine()`.
+# @param filteredData Dataframe containing the filtered and normalized dataset with id number
 #' @param metadata Dataframe containing metadata
-#' @param attributes List of attributes used in data analysis: `list(filter.by, thresh, umap_nn, umap_mindist, umap_metric, hclust_k, hclust_metric, hclust_p)`
+# @param attributes List of attributes used in data analysis: `list(filter.by, thresh, umap_nn, umap_mindist, umap_metric, hclust_k, hclust_metric, hclust_p)`
 #' @return An mFISH object.
 #'
-#'
+#' @import dplyr
 #'
 #' @export
 ruMake <- function(df, metadata=NA) {
+  print("Creating object...")
   #create mFISH object class
  mFISH <- setClass(Class='mFISH',
                   slots=c('rawData'='data.frame', 'filteredData'='list',
@@ -22,6 +25,7 @@ ruMake <- function(df, metadata=NA) {
   #if data.frame - start from scratch
   if(isDf=='data.frame'){
     df <- dplyr::select(ruCombine, -c(X,Y))
+    df <- dplyr::mutate(ruCombine, )
     meta <- dplyr::select(ruCombine, c(X,Y))
 
     #allocate meta data and raw data to respective slots
@@ -47,7 +51,7 @@ ruMake <- function(df, metadata=NA) {
                     metaData = meta,
                     attributes = list(filter.by=NA, thresh=NA, umap_nn=NA,
                                   umap_mindist=NA, umap_metric=NA, hclust_k=NA,
-                                  hclust_metric=NA, hclust_p=NA))
+                                  hclust_metric=NA, hclust_p=NA, pca=NA, npc=NA))
     #return object
     hiPlex
   }
