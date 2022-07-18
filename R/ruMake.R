@@ -25,7 +25,7 @@ ruMake <- function(df, metadata=NULL) {
   #if data.frame - start from scratch
   if(isDf=='data.frame'){
     meta <- dplyr::select(df, c(X,Y,id))
-    df <- dplyr::select(df, -c(X,Y,id))
+    df <- dplyr::select(df, -c(X,Y))
 
     #allocate meta data and raw data to respective slots
     otherData  <- checkVal %in% names(df)
