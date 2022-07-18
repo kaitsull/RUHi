@@ -7,7 +7,7 @@
 #' @param filter.by A gene or a vector of gene names to filter data by
 #' @param exclude A gene or vector of gene names to exclude from analysis
 #'
-#' @import dplyr
+#' @import dplyr rlang
 #'
 #' @return An mFISH object with a populated filteredData section
 #'
@@ -32,9 +32,9 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
           print(paste("WARNING: ", filter.by[i], " is not present in this current dataset. Please check spelling!",
                       sep=""))
         }
-        df <- dplyr::filter(!!sym(filter.by[i])>threshold)
+        df <- dplyr::filter(df, !!rlang::sym(filter.by[i])>threshold)
         #POTENTIAL ROADBLOCK???
-        df <- dplyr::select(-(!!sym(filter.by[i])))
+        df <- dplyr::select(df, -(!!rlang::sym(filter.by[i])))
       }
     }
     if(!is.na(exclude)){
@@ -46,7 +46,7 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
                         sep=""))
         }
         #POTENTIAL ROADBLOCK???
-        df <- dplyr::select(-(!!sym(exclude[i])))
+        df <- dplyr::select(df, -(!!rlang::sym(exclude[i])))
       }
     }
     #populate object with values

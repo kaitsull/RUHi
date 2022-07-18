@@ -2,11 +2,11 @@
 #'
 #' @param dir Directory containing the quantified channel tables.
 #' @param region A character string with the name of the tissue region imaged.
-#' @param num Animal number or unique identifier for tissue sample.
+#' @param anum Animal number or unique identifier for tissue sample.
 #' @param section Section number
 #' @return A dataframe containing the quantified mFISH data of all channels present.
 #'
-#' @import dplyr
+#' @import dplyr utils
 #'
 #' @export
 ruRead <- function(dir, region = NA, anum = NA, section=NA) {
@@ -16,18 +16,21 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
   print(filelist)
 
   #initialize hiplex dataframe with cell # and X, Y position
-  geneData <- read.csv(paste(dir, .Platform$file.sep, filelist[i], sep = ""))
+  geneData <- utils::read.csv(paste(dir, .Platform$file.sep, filelist[i], sep = ""))
   hiPlex <- select(geneData, X, Y)
 
   #linear or non linear
-  if(length(grep("_NL.tif",filelist[1]))==0){
-    del <- 38
+  if(grepl("_NL.tif", filelist[1])){
+    #current code name - assumes NL too
+    del <- 45
   }
-  else if(length(grep("rigid",filelist[1])==0)){
-    del <- 77
+  else if(grepl("rigid", filelist[1])){
+    #long form name (old code)
+    del <- 62
   }
   else{
-    del <- 46
+    #3-4plex, no registration
+    del <- 23
   }
 
 
@@ -39,12 +42,9 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
     geneData <- read.csv(cur)
 
     #User-selected filtering of real vs unreal signal
-    hiPlex <- mutate(hiPlex, !!geneName := (geneData$Mean/geneData$Area)*255)
+    hiPlex <- dplyr::mutate(hiPlex, !!geneName := (geneData$Mean/geneData$Area)*255)
     i<-i+1
   }
-
-  #write .csv
-  write.csv(hiPlex, title)
 
   #name
   title <- "mFISH"
@@ -52,7 +52,7 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
     title <- paste(title, region, sep="_")
     hiPlex <- dplyr::mutate(region=region)
   }
-  else if(!is.na(num)){
+  else if(!is.na(anum)){
     title <- paste(title, anum, sep="_")
     hiPlex <- dplyr::mutate(anum=anum)
   }
@@ -63,10 +63,10 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
 
   #save title and id
   title <- paste(title, ".csv", sep = "")
-  hiPlex <- plyr::mutate(id=1:nrow(hiPlex))
+  hiPlex <- dplyr::mutate(hiPlex, id=1:nrow(hiPlex))
 
   #write .csv
-  write.csv(hiPlex, title)
+  utils::write.csv(hiPlex, title)
   #return dataframe
   hiPlex
 }

@@ -19,7 +19,7 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
   }
 
   #check for filtered data
-  if(is.na(mFISH@filteredData)){
+  if(length(mFISH@filteredData)==0){
     mFISH@filteredData <- mFISH@rawData
   }
 
@@ -33,12 +33,12 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
   if(remove.outliers){
     print("Removing outliers...")
     #single genes
-    n<-dplyr::mutate(df, nfts =rowSums(n>0))
-    id <- dplyr::mutate(id, nfts=n$nfts)
-    n<-dplyr::filter(df, nfts>outlier.thresh[1])
-    n<-dplyr::filter(df, nfts<outlier.thresh[2])
+    df<-dplyr::mutate(df, nfts =rowSums(df>0))
+    id <- dplyr::mutate(id, nfts=df$nfts)
+    df<-dplyr::filter(df, nfts>outlier.thresh[1])
+    df<-dplyr::filter(df, nfts<outlier.thresh[2])
     id<-dplyr::filter(id, nfts %in% df$nfts)
-    n<-dplyr::select(n, -nfts)
+    df<-dplyr::select(df, -nfts)
   }
 
   print("Normalizing data...")

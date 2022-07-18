@@ -8,30 +8,28 @@
 # @param attributes List of attributes used in data analysis: `list(filter.by, thresh, umap_nn, umap_mindist, umap_metric, hclust_k, hclust_metric, hclust_p)`
 #' @return An mFISH object.
 #'
-#' @import dplyr
+#' @import dplyr methods
 #'
 #' @export
 #'
 
-ruMake <- function(df, metadata=NA) {
+ruMake <- function(df, metadata=NULL) {
   print("Creating object...")
-  #create mFISH object class
- mFISH <- setClass(Class='mFISH',
-                  slots=c('rawData'='data.frame', 'filteredData'='list',
-                          'metaData'='data.frame', 'attributes'='list'))
+
   #get class of input
   isDf <- class(df)
+  df <- df
   #check for these values in names
   checkVal <- c("section", "anum", "region")
 
   #if data.frame - start from scratch
   if(isDf=='data.frame'){
-    df <- dplyr::select(ruCombine, -c(X,Y))
-    df <- dplyr::mutate(ruCombine, )
-    meta <- dplyr::select(ruCombine, c(X,Y))
+    meta <- dplyr::select(df, c(X,Y))
+    df <- dplyr::select(df, -c(X,Y))
+    meta <- dplyr::mutate(df, id=df$id)
 
     #allocate meta data and raw data to respective slots
-    otherData  <- checkVal %in% names(ruCombine)
+    otherData  <- checkVal %in% names(df)
     for(i in 1:length(checkVal)){
       if(otherData[i]==T){
         df <- dplyr::select(df, -checkVal[i])
@@ -40,16 +38,19 @@ ruMake <- function(df, metadata=NA) {
     }
 
     #include other metadata
-    if(!is.na(metadata)){
+    if(!is.null(metadata)){
       for(i in 1:length(names(metadata))){
         cur <- names(metadata[i])
         meta$cur <- metadata$cur
       }
     }
+    else{
+      meta <- data.frame()
+    }
 
     #enter rawData and metaData
     #leave filterData and attributes for future functions
-    hiPlex <- mFISH(rawData = df, filterData = NA,
+    hiPlex <- methods::new(Class='mFISH', rawData = df, filteredData = data.frame(),
                     metaData = meta,
                     attributes = list(filter.by=NA, thresh=NA, umap_nn=NA,
                                   umap_mindist=NA, umap_metric=NA, hclust_k=NA,
@@ -59,6 +60,6 @@ ruMake <- function(df, metadata=NA) {
   }
   else{
     #print error if not a dataframe
-    print("Incorrect class. ruCombine should be a dataframe output from the function ruCombine().")
+    print("Incorrect class. Should be a dataframe output from the function ruCombine() or ruRead().")
   }
 }

@@ -2,20 +2,21 @@
 % Please edit documentation in R/ruMake.R
 \name{ruMake}
 \alias{ruMake}
-\title{Create a dataframe containing quantified mFISH data}
+\title{Create an mFISH object}
 \usage{
-ruMake(dir, region = NA, id = NA)
+ruMake(df, metadata = NULL)
 }
 \arguments{
-\item{dir}{Directory containing the quantified channel tables.}
+\item{df}{Dataframe from \code{ruRead()} or \code{ruCombine()}.}
 
-\item{region}{A character string with the name of the tissue region imaged.}
-
-\item{id}{Animal number or unique identifier for tissue sample.}
+\item{metadata}{Dataframe containing metadata}
 }
 \value{
-A dataframe containing the quantified mFISH data of all channels present.
+An mFISH object.
 }
 \description{
-Create a dataframe containing quantified mFISH data
+Create an mFISH object
+}
+\author{
+Kaitlin E Sullivan
 }
