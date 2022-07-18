@@ -50,6 +50,9 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
       }
     }
     #populate object with values
+    mFISH@metaData <- dplyr::mutate(mFISH@metaData,
+                                    fil = ifelse(id %in% mFISH@filteredData$id,
+                                           'in', 'out'))
     mFISH@filteredData <- df
     mFISH@attributes$filter.by <- filter.by
     mFISH@attributes$threshold <- threshold
