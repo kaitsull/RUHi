@@ -16,7 +16,7 @@
 
 ruUMAP <- function(mFISH, metric="manhattan", nn=15, min.dist=0.1, npc=8){
   #warning if no pca ran
-  if(is.na(mFISH@attributes$pca)){
+  if(suppressWarnings(is.na(mFISH@attributes$pca))){
     warning("Please run `ruProcess()` prior to running UMAP dimensionality reduction.")
   }
   else{
@@ -36,12 +36,12 @@ ruUMAP <- function(mFISH, metric="manhattan", nn=15, min.dist=0.1, npc=8){
 
     #save coordinates
     print("Saving custom configuration...")
-    mFISH@metadata <- dplyr::mutate(mFISH@metaData, UMAP_1 = u$layout[,1],
-                                    UMAP_2 = u$layout[,2])
+
     mFISH@attributes$umap_nn <- nn
     mFISH@attributes$umap_mindist <- min.dist
     mFISH@attributes$umap_metric <- metric
     mFISH@attributes$npc <- npc
+    mFISH@attributes$umap <- data.frame(UMAP_1 = u$layout[,1], UMAP_2 = u$layout[,2])
 
     #return object
     mFISH

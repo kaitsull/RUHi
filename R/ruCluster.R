@@ -20,8 +20,8 @@ ruCluster <- function(mFISH, k, npc = 8, dmetric = "euclidean", p = 2){
 
   #update object
   #save the id-cluster combo
-  fildat <- mutate(mFISH@filteredData, cluster = as.factor(clus))
-  met <- mutate(mFISH@metaData, ifelse(fildat$id %in% mFISH@metaData$id,
+  fildat <- dplyr::mutate(mFISH@filteredData, cluster = as.factor(clus))
+  met <- dplyr::mutate(mFISH@metaData, ifelse(fil==T,
                                        fildat$cluster,
                                        paste(mFISH@attributes$filter.by, "neg", sep = "_")))
   #add to metadata
@@ -30,4 +30,7 @@ ruCluster <- function(mFISH, k, npc = 8, dmetric = "euclidean", p = 2){
   mFISH@attributes$hclust_k <- k
   mFISH@attributes$hclust_metric <- dmetric
   mFISH@attributes$hclust_p <- p
+
+  #return object
+  mFISH
 }
