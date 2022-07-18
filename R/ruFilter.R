@@ -50,12 +50,24 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
       }
     }
     #populate object with values
-    mFISH@metaData <- dplyr::mutate(mFISH@metaData,
-                                    fil = ifelse(id %in% mFISH@filteredData$id,
-                                           'in', 'out'))
     mFISH@filteredData <- df
     mFISH@attributes$filter.by <- filter.by
     mFISH@attributes$threshold <- threshold
+
+    #save filtered ids
+    fils <- dplyr::select(mFISH@filteredData, id)
+    fils <- dplyr::mutate(fils, fil = T)
+    others <- dplyr::filter(mFISH@rawData, !(id %in% fils$id))
+    others <- dplyr::select(others, id)
+    others <- dplyr::mutate(others, fil = F)
+
+
+    #bind
+    b <- rbind(fils, others)
+    b <- dplyr::arrange(b, id)
+    mFISH@metaData <- dplyr::mutate(mFISH@metaData, fil = b$fil)
+
+
   }
   #return mFISH object
   mFISH

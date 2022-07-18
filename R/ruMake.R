@@ -24,9 +24,8 @@ ruMake <- function(df, metadata=NULL) {
 
   #if data.frame - start from scratch
   if(isDf=='data.frame'){
-    meta <- dplyr::select(df, c(X,Y))
-    df <- dplyr::select(df, -c(X,Y))
-    meta <- dplyr::mutate(df, id=df$id)
+    meta <- dplyr::select(df, c(X,Y,id))
+    df <- dplyr::select(df, -c(X,Y,id))
 
     #allocate meta data and raw data to respective slots
     otherData  <- checkVal %in% names(df)
@@ -44,9 +43,7 @@ ruMake <- function(df, metadata=NULL) {
         meta$cur <- metadata$cur
       }
     }
-    else{
-      meta <- data.frame()
-    }
+
 
     #enter rawData and metaData
     #leave filterData and attributes for future functions
