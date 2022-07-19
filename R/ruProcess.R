@@ -38,6 +38,7 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
     df<-dplyr::filter(df, nfts>outlier.thresh[1])
     df<-dplyr::filter(df, nfts<outlier.thresh[2])
     id<-dplyr::filter(id, nfts %in% df$nfts)
+    nfts<-df$nfts
     df<-dplyr::select(df, -nfts)
   }
 
@@ -50,7 +51,7 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
   pca <- prcomp(df, center = T, scale = T)
 
   #save the data
-  mFISH@filteredData <- dplyr::mutate(df, id=id)
+  mFISH@filteredData <- dplyr::mutate(df, id=id, nfts=nfts)
   mFISH@attributes$pca <- pca$x
 
   #return object

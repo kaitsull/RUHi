@@ -20,6 +20,7 @@ plotSpace <- function(mFISH, colour.by="cluster",
   df <- merge(df, md)
 
   fil.df <- dplyr::filter(df, fil==T)
+  bg <- dplyr::select(df, -cluster)
 
 
 
@@ -27,7 +28,7 @@ plotSpace <- function(mFISH, colour.by="cluster",
   if(include.fil){
     p <- ggplot2::ggplot(fil.df, aes_string(x="X", y="Y", colour=colour.by))+
       theme_classic()+
-      geom_point(data = df, colour='grey', size=size)+
+      geom_point(data = bg, colour='grey', size=size)+
       geom_point(size=size)
   }
   #without
