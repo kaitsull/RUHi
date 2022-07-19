@@ -5,7 +5,7 @@
 #' @param size Point size
 #' @param cols Vector of colours
 #' @param include.fil Logical allowing for filtered cells to appear in grey
-#' @param facet A variable to separate plots by (eg: section or anum to view individual slices)
+#' @param group.by A variable to separate plots by (eg: section or anum to view individual slices)
 #'
 #' @return A ggplot showing cells in native space!
 #' @export

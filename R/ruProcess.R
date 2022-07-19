@@ -8,7 +8,8 @@
 #'
 #' @return and mFISH object, normalized and containing a PCA (found in `obj@attributes$pca`)
 #'
-#' @import dplyr stats
+#' @import dplyr
+#' @importFrom stats prcomp na.omit
 #'
 #' @export
 #'

@@ -10,7 +10,8 @@
 #' @return A clustered mFISH object.
 #' @export
 #'
-#' @import stats dplyr
+#' @import dplyr
+#' @importFrom stats hclust cutree dist
 #'
 ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
   #save pca
@@ -20,7 +21,7 @@ ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
   hc <- stats::hclust(d = stats::dist(pca[,1:npc], method=dmetric, p=p),
                       method = 'ward.D2')
   #cut tree
-  clus <- cutree(hc, k=k)
+  clus <- stats::cutree(hc, k=k)
   filt <- data.frame(cluster = clus, id = mFISH@filteredData$id)
 
   #update object

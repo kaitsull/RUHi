@@ -24,7 +24,7 @@ plotSpace(
 
 \item{include.fil}{Logical allowing for filtered cells to appear in grey}
 
-\item{facet}{A variable to separate plots by (eg: section or anum to view individual slices)}
+\item{group.by}{A variable to separate plots by (eg: section or anum to view individual slices)}
 }
 \value{
 A ggplot showing cells in native space!

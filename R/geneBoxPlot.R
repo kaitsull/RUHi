@@ -9,6 +9,8 @@
 #' @return A box plot showing gene expression
 #' @export
 #'
+#' @import ggplot2
+#'
 geneBoxPlot <- function(mFISH, gene, group = "cluster"){
   #save data
   df <- mFISH@filteredData
@@ -24,7 +26,7 @@ geneBoxPlot <- function(mFISH, gene, group = "cluster"){
   }
 
   #plot
-  gp <- ggplot(df, aes_string(x=group, y=gene, fill=group))+
+  gp <- ggplot2::ggplot(df, aes_string(x=group, y=gene, fill=group))+
     geom_boxplot(outlier.shape = NA)+
     theme_classic()+
     labs(y="Expression", title = gene)
