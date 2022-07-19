@@ -64,8 +64,10 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
 
     #bind
     b <- rbind(fils, others)
+    print("Updating metadata...")
     b <- dplyr::arrange(b, id)
-    mFISH@metaData <- dplyr::mutate(mFISH@metaData, fil = b$fil)
+    md <- mFISH@metaData
+    mFISH@metaData <- dplyr::mutate(md, fil = b$fil)
 
 
   }

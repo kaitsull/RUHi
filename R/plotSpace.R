@@ -12,7 +12,7 @@
 #'
 #' @import ggplot2 dplyr
 plotSpace <- function(mFISH, colour.by="cluster",
-                      size = 0.9, cols=NA, include.fil=T, facet=NA){
+                      size = 0.9, cols=NA, include.fil=T, group.by=NA){
 
   #save object
   df <- mFISH@rawData
@@ -54,8 +54,8 @@ plotSpace <- function(mFISH, colour.by="cluster",
   }
 
   #facetwrap
-  if(!is.na(facet)){
-    p <- p + facet_wrap(as.formula(paste("~", facet, sep = "")))
+  if(!is.na(group.by)){
+    p <- p + facet_wrap(as.formula(paste("~", group.by, sep = "")))
   }
 
   #print plot
