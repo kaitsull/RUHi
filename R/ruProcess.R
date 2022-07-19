@@ -8,7 +8,7 @@
 #'
 #' @return and mFISH object, normalized and containing a PCA (found in `obj@attributes$pca`)
 #'
-#' @import dplyr
+#' @import dplyr stats
 #'
 #' @export
 #'
@@ -54,12 +54,12 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
 
   #remove NAs
   df <- dplyr::mutate(df, id = ids$id)
-  df <- na.omit(df)
+  df <- stats::na.omit(df)
   ids <- dplyr::filter(ids, id %in% df$id)
 
   print("Running PCA...")
   #run a pca
-  pca <- prcomp(df, center = T, scale = T)
+  pca <- stats::prcomp(df, center = T, scale = T)
 
   #save the data
   mFISH@filteredData <- dplyr::mutate(df, id=ids$id)

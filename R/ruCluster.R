@@ -10,12 +10,15 @@
 #' @return A clustered mFISH object.
 #' @export
 #'
+#' @import stats dplyr
+#'
 ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
   #save pca
   pca <- m@attributes$pca
   #run clustering
   npc <- m@attributes$npc
-  hc <- hclust(d = dist(pca[,1:npc], method=dmetric, p=p), method = 'ward.D2')
+  hc <- stats::hclust(d = stats::dist(pca[,1:npc], method=dmetric, p=p),
+                      method = 'ward.D2')
   #cut tree
   clus <- cutree(hc, k=k)
   filt <- data.frame(cluster = clus, id = mFISH@filteredData$id)

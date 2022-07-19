@@ -6,9 +6,11 @@
 #' @param section Section number
 #' @return A dataframe containing the quantified mFISH data of all channels present.
 #'
-#' @import dplyr utils
+#' @import dplyr utils read.table
 #'
 #' @export
+#'
+#' @import utils dplyr
 ruRead <- function(dir, region = NA, anum = NA, section=NA) {
   i<-1
   filelist = list.files(path = dir, pattern = "_quantification.csv$")
@@ -39,7 +41,7 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
     #extract gene name from file name
     cur <- filelist[i]
     geneName <- substr(cur, 8, (nchar(cur)-del))
-    geneData <- read.csv(cur)
+    geneData <- read.table::read.csv(cur)
 
     #User-selected filtering of real vs unreal signal
     hiPlex <- dplyr::mutate(hiPlex, !!geneName := (geneData$Mean/geneData$Area)*255)

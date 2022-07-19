@@ -55,7 +55,7 @@ plotSpace <- function(mFISH, colour.by="cluster",
 
   #facetwrap
   if(!is.na(group.by)){
-    p <- p + facet_wrap(as.formula(paste("~", group.by, sep = "")))
+    p <- p + facet_wrap(stats::as.formula(paste("~", group.by, sep = "")))
   }
 
   #print plot

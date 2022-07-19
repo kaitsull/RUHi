@@ -8,6 +8,7 @@
 #' @import dplyr
 #'
 #' @export
+#' @import dplyr
 ruCombine <- function(dfs) {
   #if the data is 2+ dataframes
   if(length(dfs)>1){
@@ -26,7 +27,7 @@ ruCombine <- function(dfs) {
       }
 
       #change id numbers for subsequent round
-      objs[i+1] <- mutate(objs[i+1], id=id+lst)
+      objs[i+1] <- dplyr::mutate(objs[i+1], id=id+lst)
       #bind tables
       cur <- rbind(cur, objs[i+1])
     }

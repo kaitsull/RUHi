@@ -10,8 +10,25 @@ Authors@R:
 Description: This package allows for the analysis and visualization of multiplexed FISH data, as well as the intergration of this data with scRNA-seq data.
 License: GPL-3
 Imports: 
-    testthat, shiny, shinyWidgets, umap, Rtsne, ggplot2, shinydashboard, shinybusy,
-    dashboardthemes, tidyr, dplyr, DT, here, shinythemes, reshape2, utils, stats
+    testthat,
+    shiny,
+    shinyWidgets,
+    umap,
+    Rtsne,
+    ggplot2,
+    shinydashboard,
+    shinybusy,
+    dashboardthemes,
+    tidyr,
+    dplyr,
+    DT,
+    here,
+    shinythemes,
+    reshape2,
+    utils,
+    stats,
+    methods,
+    rlang
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
