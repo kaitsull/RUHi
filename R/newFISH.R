@@ -446,8 +446,8 @@ newFISH <- function(mFISH, filter.by=NA){
         md <- dplyr::filter(meta, id %in% df$id)
 
         #add metadata to df
-        df <- dplyr::mutate(df, UMAP_1 = attribs$umap[,1],
-                            UMAP_2 = attribs$umap[,2], cluster = mc(),
+        df <- dplyr::mutate(df, UMAP_1 = attribs()$umap[,1],
+                            UMAP_2 = attribs()$umap[,2], cluster = mc(),
                             X = md$X, Y = md$Y)
 
         #add other factorial gorupings
@@ -636,12 +636,18 @@ newFISH <- function(mFISH, filter.by=NA){
 #####DOWNLOAD BUTTONS
 
     #OBJECT
+    myObj <- shiny::reactive({
+      myObj <- new(Class = "mFISH", rawData = raw, filteredData = mp(),
+                   metaData = metaReact(), attributes = attribs())
+      myObj
+    })
+
     output$obj<-downloadHandler(
       filename = function() {
         paste('goFISH', '.rds', sep='')
       },
       content=function(file){
-        saveRDS(mc(), file)
+        saveRDS(myObj(), file)
       })
 
     # raw space plot
