@@ -36,6 +36,7 @@ ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
 
 
   #add to metadata
+  print('Clustering...')
   mFISH@metaData <- dplyr::mutate(mFISH@metaData, cluster = clustered$cluster)
   #add to attributes
   mFISH@attributes$hclust_k <- k

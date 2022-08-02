@@ -14,7 +14,7 @@
 #' @export
 ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
   #save raw data
-  df <- mFISH@rawData
+  df <- rawData(mFISH)
   #filter by list
   #warning if nothing to filter by
   if(is.na(filter.by) && is.na(exclude)){
@@ -50,14 +50,20 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
       }
     }
     #populate object with values
-    mFISH@filteredData <- df
-    mFISH@attributes$filter.by <- filter.by
-    mFISH@attributes$threshold <- threshold
+    #filtered
+    filteredData(mFISH) <- df
+    #attributes
+    my.attrib <- getAttrib(mFISH)
+    my.attrib$filter.by <- filter.by
+    my.attrib$thresh <- threshold
+    setAttrib(mFISH) <- my.attrib
+    #mFISH@attributes$filter.by <- filter.by
+    #mFISH@attributes$thresh <- threshold
 
     #save filtered ids
-    fils <- dplyr::select(mFISH@filteredData, id)
+    fils <- dplyr::select(filteredData(mFISH), id)
     fils <- dplyr::mutate(fils, fil = T)
-    others <- dplyr::filter(mFISH@rawData, !(id %in% fils$id))
+    others <- dplyr::filter(rawData(mFISH), !(id %in% fils$id))
     others <- dplyr::select(others, id)
     others <- dplyr::mutate(others, fil = F)
 
@@ -66,8 +72,8 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
     b <- rbind(fils, others)
     print("Updating metadata...")
     b <- dplyr::arrange(b, id)
-    md <- mFISH@metaData
-    mFISH@metaData <- dplyr::mutate(md, fil = b$fil)
+    md <- metaData(mFISH)
+    metaData(mFISH) <- dplyr::mutate(md, fil = b$fil)
 
 
   }
