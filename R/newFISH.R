@@ -8,7 +8,7 @@
 #' @import shiny shinyWidgets umap ggplot2 shinydashboard tidyr dplyr shinythemes shinybusy
 #'
 #' @export
-newFISH <- function(mFISH, filter.by=NA){
+newFISH <- function(mFISH, filter.by=NA, k=NA){
   #Kaitlin Sullivan November 2020
   #This shiny app allows the naive scientist to browse and visualize analyzed
   #mFISH data in a user-friendly way
@@ -30,6 +30,13 @@ newFISH <- function(mFISH, filter.by=NA){
     filter.by <- filgenes[1]
   }
 
+  if(is.na(k)){
+    inclus <- 3
+  }
+  else{
+    inclus <- k
+  }
+
   if(!filter.by %in% filgenes){
     warning("Selected filter.by gene is not present in mFISH object.")
   }
@@ -40,7 +47,10 @@ newFISH <- function(mFISH, filter.by=NA){
   #throw error if numeric
   grouping <- names(grouping)
   if(length(grouping)==0){
-    grouping <- NA
+    grouping <- c("None","cluster")
+  }
+  else{
+    grouping <- c("None" ,grouping, "cluster")
   }
 
   ui <- shiny::fluidPage(
@@ -97,8 +107,8 @@ newFISH <- function(mFISH, filter.by=NA){
                           "npcs",
                           "Number of Principle Components to use:",
                           min = 3,
-                          max = length(filgenes),
-                          value = length(filgenes),
+                          max = length(filgenes)-1,
+                          value = length(filgenes)-3,
                           step = 1
                         ))
                       ),
@@ -106,7 +116,7 @@ newFISH <- function(mFISH, filter.by=NA){
                       checkboxInput(
                         "out",
                         "Remove outliers?",
-                        value = T
+                        value = F
                       )
                     ),
 
@@ -147,18 +157,21 @@ newFISH <- function(mFISH, filter.by=NA){
                   )
                 ),
                 br(),
-                # fluidRow(
-                #   column(
-                #   12,
-                #   actionButton(
-                #   "go",
-                #   "Analyze"
-                #   )
-                # , align = "center"
-                # , style = "margin-bottom: 10px;"
-                # , style = "margin-top: -10px;"
-                #   )
-                # ),
+               fluidRow(
+                 column(
+                  5, br()
+                 ),
+                 column(
+                   3,
+                   shiny::downloadButton(
+                     "obj",
+                     "Download Object"
+                   )
+                 ),
+                 column(
+                   2, br()
+                 )
+                ),
 #### RAW GENE OUTPUTS
                 #Raw gene data
                 shiny::fluidRow(
@@ -204,7 +217,7 @@ newFISH <- function(mFISH, filter.by=NA){
                         column(
                           width=4,
                           #h3("Gene Boxplot"), br(),
-                          shiny::plotOutput("rawBoxPlot"),
+                          shiny::plotOutput("rawBP"),
                           br(),
                           shiny::downloadButton(
                             "rbp",
@@ -227,17 +240,14 @@ newFISH <- function(mFISH, filter.by=NA){
                         "Number of Clusters",
                         min = 1,
                         max = 15,
-                        value = 3,
+                        value = inclus,
                         step = 1
                       ), br(),
                       #NEW ADDITION
-                      shiny::checkboxGroupInput("groups",
+                      shiny::radioButtons("groups",
                                                 "Group Plots by Metadata:",
-                                                choices=grouping), br(),
-                      shiny::downloadButton(
-                        "obj",
-                        "Download Object"
-                      )
+                                                choices=grouping,
+                                          selected = grouping[1])
                     ),
                     shiny::mainPanel(
                       #shiny::fluidRow(
@@ -264,7 +274,7 @@ newFISH <- function(mFISH, filter.by=NA){
                         column(
                           width=4,
                           #h3("Cluster Boxplot"), br(),
-                          shiny::plotOutput("clusBoxPlot"),
+                          shiny::plotOutput("clusBP"),
                           br(),
                           shiny::downloadButton(
                             "cbp",
@@ -315,8 +325,25 @@ newFISH <- function(mFISH, filter.by=NA){
 
 #reactive metadata for object building
      metaReact <- shiny::reactive({
+       #add clusters
        cc <- clusDat()
-       metaReact <- dplyr::mutate(meta, cluster = clusDat$cluster)
+       metaReact <- dplyr::mutate(meta, cluster = cc$cluster)
+
+       #create the fil variable
+       fils <- filIds()
+       fils <- dplyr::mutate(fils, fil = T)
+       others <- dplyr::filter(raw, !(id %in% fils$id))
+       others <- dplyr::select(others, id)
+       others <- dplyr::mutate(others, fil = F)
+
+       #bind
+       b <- rbind(fils, others)
+       print("Updating metadata...")
+       b <- dplyr::arrange(b, id)
+
+       #add fil
+       metaReact <- dplyr::mutate(meta, fil = b$fil)
+
        metaReact
      })
 
@@ -326,8 +353,16 @@ newFISH <- function(mFISH, filter.by=NA){
       #filtering user input
       mf <- shiny::reactive({
         print("begin filtering")
-        mf <- dplyr::filter(raw, input$mg > input$filter)
-        mf <- dplyr::select(mf, -(input$mg))
+
+        mf <- raw
+
+        #for loop filtering out all genes
+        l <- length(input$mg)
+        for(i in 1:l){
+          mf <- dplyr::filter(mf, !!rlang::sym(input$mg[i]) > input$filter)
+          mf <- dplyr::select(mf, -(!!rlang::sym(input$mg[i])))
+        }
+
         #mf <- RUHi::ruFilter(mfish, threshold=input$filter,
                              #filter.by = input$mg)
         print("filtering completed")
@@ -338,14 +373,32 @@ newFISH <- function(mFISH, filter.by=NA){
       #remove outliers
       mp <- shiny::reactive({
         print("begin preprocessing")
+        #save dfs
         mp <- mf()
+        ids <- mp$id
+        mp <- dplyr::select(mp, -id)
+
+        #normalize
+        mp <- sweep(mp, 1,apply(mp, 1, sum), "/")
+
+        #remove nas
+        mp <- dplyr::mutate(mp, id=ids)
+        mp <- na.omit(mp)
+
 
         if(input$out){
+          #resave ids
+          ids <- mp$id
+          mp <- dplyr::select(mp, -id)
+
           #find cells with number of features outside of threshold
-          prepro <- dplyr::mutate(mp, nfts =rowSums(df>0))
+          prepro <- dplyr::mutate(mp, nfts = rowSums(mp>0))
+
+          #bring back the ids for filtering
+          prepro <- dplyr::mutate(prepro, id=ids)
 
           #low/high
-          prepro <- dplyr::filter(prepro, nfts>1)
+          prepro <- dplyr::filter(prepro, nfts>0)
           prepro <- dplyr::filter(prepro, nfts<length(mygenes()))
 
           #remove labs
@@ -356,6 +409,8 @@ newFISH <- function(mFISH, filter.by=NA){
 
         #mp <- RUHi::ruProcess(prepro, remove.outliers = input$out,
                               #outlier.thresh = c(1, length(mygenes())))
+
+
         mp
       })
 
@@ -363,8 +418,8 @@ newFISH <- function(mFISH, filter.by=NA){
       #RUN AND SAVE A PCA
       pca <- shiny::reactive({
         print("begin PCA")
-        df <- dplyr::filter(mp(), -id)
-        p <- prcomp(df, centre=T, scale=T)
+        df <- dplyr::select(mp(), -id)
+        p <- prcomp(df, center=T, scale=T)
         pca <- p$x
         print("PCA completed")
 
@@ -418,8 +473,18 @@ newFISH <- function(mFISH, filter.by=NA){
 
       #SAVE FILTERED IDS
       filIds <- shiny::reactive({
-        filIds <- dplyr::filter(mp(), id)
+        filIds <- dplyr::select(mp(), id)
+        filIds
       })
+
+      #SAVE FILTERED COORDS
+      filCoord <- shiny::reactive(({
+        df <- mp()
+        filCoord <- dplyr::filter(meta, id %in% df$id)
+        filCoord <- dplyr::mutate(filCoord, cluster = mc())
+
+        filCoord
+      }))
 
       #SAVE CLUSTERS FOR METADATA
       clusDat <- shiny::reactive({
@@ -433,7 +498,7 @@ newFISH <- function(mFISH, filter.by=NA){
 
         #bind together
         clusDat <- rbind(inid, outid)
-        clusDat <- dplyr::arrange(clustDat, id)
+        clusDat <- dplyr::arrange(clusDat, id)
 
         #return
         clusDat
@@ -443,22 +508,23 @@ newFISH <- function(mFISH, filter.by=NA){
       #wide
       gWide <- shiny::reactive({
         df <- mp()
-        md <- dplyr::filter(meta, id %in% df$id)
+        md <- filCoord()
+        um <- mu()
 
         #add metadata to df
-        df <- dplyr::mutate(df, UMAP_1 = attribs()$umap[,1],
-                            UMAP_2 = attribs()$umap[,2], cluster = mc(),
+        df <- dplyr::mutate(mp(), UMAP_1 = um[,1],
+                            UMAP_2 = um[,2], cluster = md$cluster,
                             X = md$X, Y = md$Y)
 
         #add other factorial gorupings
-        if(!is.na(grouping)){
-          for(i in 1:length(grouping)){
-            #save the index of column
-            ci <- grep(grouping[i], colnames(meta))
-            #save varaible
-            df <- dplyr::mutate(df, !!grouping[i] := meta[,ci])
-          }
-        }
+        # if(!is.na(grouping)){
+        #   for(i in 1:length(grouping)){
+        #     #save the index of column
+        #     ci <- grep(grouping[i], colnames(meta))
+        #     #save varaible
+        #     df <- dplyr::mutate(df, !!grouping[i] := meta[,ci])
+        #   }
+        # }
 
         gWide <- df
 
@@ -482,18 +548,17 @@ newFISH <- function(mFISH, filter.by=NA){
   #RAW GENE
     sgplot <- shiny::reactive({
 
-      sgplot <- ggplot2::ggplot(gWide(), aes(x=X, y=Y, colour=input$geneIn))+
-        geom_point()+
-        theme_classic()+
-        scale_fill_gradientn(values=c("cyan", "red"))+
-        labs(title=paste("Spatial Location of ", input$geneIn, " Expression",
-                         sep=""))
+      sgplot <- ggplot2::ggplot(gWide(), aes_string(x='X', y='Y', colour=input$geneNames))+
+        geom_point(size=0.6)+
+        Seurat::DarkTheme()+
+        scale_colour_gradientn(colors=c("cyan", "red"))+
+        labs(title=paste("Spatial Location of ", input$geneNames, " Expression",
+                         sep=""),
+             subtitle = 'Use: plotSpace() with colour.by="Gene"')
 
-      #debug
-      if(!is.na(grouping)){
-        sgplot <- sgplot +
-          facet_wrap(~input$groups)
-      }
+      #print(head(dplyr::select(gWide(), !!rlang::sym(input$geneIn))))
+
+
       if(input$flipxS){
         sgplot <- sgplot + scale_x_reverse()
       }
@@ -510,7 +575,7 @@ newFISH <- function(mFISH, filter.by=NA){
     output$rawSpace <- shiny::renderPlot({
       shinybusy::play_gif()
       rawSpace <- sgplot()
-      shiny::busyupdate_busy_bar(100)
+      shinybusy::update_busy_bar(100)
       shinybusy::stop_gif()
       rawSpace
     })
@@ -519,12 +584,14 @@ newFISH <- function(mFISH, filter.by=NA){
     scplot <- shiny::reactive({
 
       scplot <- ggplot2::ggplot(gWide(), aes(x=X, y=Y, colour=cluster))+
-        geom_point()+
-        theme_classic()+
-        labs(title="Spatial Location of Clusters")
+        geom_point(data=meta, colour='grey', size=0.6)+
+        geom_point(size=0.6)+
+        Seurat::DarkTheme()+
+        labs(title="Spatial Location of Clusters",
+             subtitle = 'Use: plotSpace()')
 
       #debug
-      if(!is.na(grouping)){
+      if(input$groups != "None"){
         scplot <- scplot +
           facet_wrap(~input$groups)
       }
@@ -538,6 +605,11 @@ newFISH <- function(mFISH, filter.by=NA){
       if(input$rotateS){
         scplot <- scplot + coord_flip()
       }
+
+      if(input$groups != "None"){
+        scplot <- scplot + facet_wrap(stats::as.formula(paste("~", input$groups, sep = "")))
+      }
+
       scplot
     })
 #:meowparty:
@@ -552,16 +624,17 @@ newFISH <- function(mFISH, filter.by=NA){
 #DIM REDUCTION
     #RAW GENE
     rumap <- shiny::reactive({
-      rumap <- ggplot2::ggplot(gWide(), aes(x=UMAP_1, y=UMAP_2, colour=input$geneIn))+
-        geom_point()+
-        theme_classic()+
-        scale_fill_gradientn(values=c("cyan", "red"))+
-        labs(title=paste("UMAP with ", input$geneIn, " Expression",
-                         sep=""))
+      rumap <- ggplot2::ggplot(gWide(), aes_string(x='UMAP_1', y='UMAP_2', colour=input$geneNames))+
+        geom_point(size=0.6)+
+        Seurat::DarkTheme()+
+        scale_colour_gradientn(colors=c("cyan", "red"))+
+        labs(title=paste("UMAP with ", input$geneNames, " Expression",
+                         sep=""),
+             subtitle = 'Use: plotDim() with colour.by="Gene"')
 
 
-      rumap <- RUHi::plotDim(mc(), colour.by = input$geneIn)+
-        labs(title = paste(input$geneIn))
+      #rumap <- RUHi::plotDim(mc(), colour.by = input$geneIn)+
+        #labs(title = paste(input$geneIn))
       rumap
     })
 
@@ -577,9 +650,10 @@ newFISH <- function(mFISH, filter.by=NA){
   #CLUSTERED
     cumap <- shiny::reactive({
       cumap <- ggplot2::ggplot(gWide(), aes(x=UMAP_1, y=UMAP_2, colour=cluster))+
-        geom_point()+
-        theme_classic()+
-        labs(title="UMAP with Clusters")
+        geom_point(size=0.6)+
+        Seurat::DarkTheme()+
+        labs(title="UMAP with Clusters",
+             subtitle = 'Use: plotDim()')
       cumap
     })
 
@@ -595,10 +669,11 @@ newFISH <- function(mFISH, filter.by=NA){
   #BOX PLOTS
     #RAW GENE
     rawbox <- shiny::reactive({
-      rawbox <- ggplot2::ggplot(gWide(), aes(x=cluster, y=input$geneIn, fill=cluster))+
+      rawbox <- ggplot2::ggplot(gWide(), aes_string(x='cluster', y=input$geneNames, fill='cluster'))+
         geom_boxplot(outlier.shape = NA)+
-        theme_classic()+
-        labs(y="Expression", title = input$geneIn)
+        Seurat::DarkTheme()+
+        labs(y="Expression", title = input$geneNames,
+             subtitle = 'Use: geneBoxPlot()')
       rawbox
     })
 
@@ -611,13 +686,18 @@ newFISH <- function(mFISH, filter.by=NA){
       rawBP
     })
 
+
     #CLUSTERED
     clusbox <- shiny::reactive({
       clusbox <- ggplot2::ggplot(gLong(), aes(x=Gene, y=Expression, fill=Gene))+
         geom_boxplot(outlier.shape = NA)+
-        theme_classic()+
+        Seurat::DarkTheme()+
         facet_wrap(~cluster)+
-        scale_colour_manual(values = rainbow(n=length(mygenes())))
+        labs(title = 'Gene Expression per Cluster',
+             subtitle = 'Use: clusterBoxPlot()')+
+        scale_fill_manual(values = rainbow(n=length(mygenes())))+
+        theme(axis.text.x=element_blank(),
+              axis.ticks.x=element_blank())
       clusbox
     })
 
@@ -653,39 +733,40 @@ newFISH <- function(mFISH, filter.by=NA){
     # raw space plot
     output$rs<-downloadHandler(
       filename = function() {
-        paste(geneIn ,'Spatial', '.eps', sep='')
+        paste(input$geneNames ,'Spatial', '.eps', sep='')
       },
       content=function(file){
-        ggsave(file, rawSpace())
+        ggsave(file, sgplot())
       },
       contentType = 'image/eps')
 
     # raw umap plot
     output$ru<-downloadHandler(
       filename = function() {
-        paste(geneIn, 'UMAP', '.eps', sep='')
+        paste(input$geneNames, 'UMAP', '.eps', sep='')
       },
       content=function(file){
-        ggsave(file, rawUMAP())
+        ggsave(file, rumap())
       },
       contentType = 'image/eps')
 
     # raw box blot
     output$rbp<-downloadHandler(
       filename = function() {
-        paste(geneIn, 'BoxPlot', '.eps', sep='')
+        paste(input$geneNames, 'BoxPlot', '.eps', sep='')
       },
       content=function(file){
-        ggsave(file, rawBP())
+        ggsave(file, rawbox())
       },
       contentType = 'image/eps')
 
     # cluster spatial
     output$cs<-downloadHandler(
       filename = function() {
-        paste('clusterSpatial', '.cvs', sep='')
+        paste('clusterSpatial', '.eps', sep='')
       },
-      content=function(file){ggsave(file, clusSpace())
+      content=function(file){
+        ggsave(file, scplot())
       },
       contentType = 'image/eps')
 
@@ -695,7 +776,7 @@ newFISH <- function(mFISH, filter.by=NA){
         paste('clusterUMAP', '.eps', sep='')
       },
       content=function(file){
-        ggsave(file, clusUMAP())
+        ggsave(file, cumap())
       },
       contentType = 'image/eps')
 
@@ -705,7 +786,7 @@ newFISH <- function(mFISH, filter.by=NA){
         paste('clusterBoxPlot', '.eps', sep='')
       },
       content=function(file){
-        ggsave(file, clusBP())
+        ggsave(file, clusbox())
       },
       contentType = 'image/eps')
 
