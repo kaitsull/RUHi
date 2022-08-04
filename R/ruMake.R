@@ -19,22 +19,12 @@ ruMake <- function(df, metadata=NULL) {
   #get class of input
   isDf <- class(df)
   df <- df
-  #check for these values in names
-  checkVal <- c("section", "anum", "region")
 
   #if data.frame - start from scratch
   if(isDf=='data.frame'){
-    meta <- dplyr::select(df, c(X,Y,id))
-    df <- dplyr::select(df, -c(X,Y))
+    meta <- dplyr::select(df, c(X,Y,id,region,anum,section))
+    df <- dplyr::select(df, -c(X,Y,region,anum,section))
 
-    #allocate meta data and raw data to respective slots
-    otherData  <- checkVal %in% names(df)
-    for(i in 1:length(checkVal)){
-      if(otherData[i]==T){
-        df <- dplyr::select(df, -checkVal[i])
-        meta <- dplyr::select(meta, checkVal[i])
-      }
-    }
 
     #include other metadata
     if(!is.null(metadata)){

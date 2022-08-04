@@ -18,7 +18,7 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
 
   #initialize hiplex dataframe with cell # and X, Y position
   geneData <- utils::read.csv(paste(dir, .Platform$file.sep, filelist[i], sep = ""))
-  hiPlex <- select(geneData, X, Y)
+  hiPlex <- dplyr::select(geneData, X, Y)
 
   #linear or non linear
   if(grepl("_NL.tif", filelist[1])){
@@ -48,19 +48,11 @@ ruRead <- function(dir, region = NA, anum = NA, section=NA) {
   }
 
   #name
-  title <- "mFISH"
-  if(!is.na(region)){
-    title <- paste(title, region, sep="_")
-    hiPlex <- dplyr::mutate(region=region)
-  }
-  else if(!is.na(anum)){
-    title <- paste(title, anum, sep="_")
-    hiPlex <- dplyr::mutate(anum=anum)
-  }
-  else if(!is.na(section)){
-    title <- paste(title, section, sep="_")
-    hiPlex <- dplyr::mutate(section=section)
-  }
+  title <- paste("mFISH", region, anum, section, sep="_")
+
+  hiPlex <- dplyr::mutate(hiPlex, region=region,
+                          anum=anum, section=section)
+
 
   #save title and id
   title <- paste(title, ".csv", sep = "")
