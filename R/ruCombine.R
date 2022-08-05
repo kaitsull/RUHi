@@ -2,7 +2,7 @@
 #'
 #' @author Kaitlin E Sullivan
 #'
-#' @param dfs A vector of dataframes (from `ruRead()`)
+#' @param dfs A list of dataframes (from `ruRead()` using `list(df1,df2,df3)`)
 #' @return A combined dataframe.
 #'
 #' @import dplyr
@@ -15,21 +15,33 @@ ruCombine <- function(dfs) {
     print("Combining tables...")
 
     #save the last id number of first df
-    cur <- objs[1]
+    cur <- dfs[1][[1]]
+    cur <- dplyr::mutate(cur, id=1:nrow(cur))
+
+    #subsequent
+    nxt <- dfs[i+1][[1]]
+
+    #last id #
     lst <- nrow(cur)
 
     #iterate through
-    for(i in 1:length(objs)-1){
+    for(i in 1:length(dfs)-1){
       print(paste("Table: ", i+1, sep=""))
       #warning if cannot combine tables
-      if(!(names(cur) %in% names(objs[i+1]))){
+      if(suppressWarnings(!(names(cur) %in% names(nxt)))){
         warning(paste("Column names of tables ", i, " and ", i+1, "are not the same.", sep=""))
       }
 
       #change id numbers for subsequent round
-      objs[i+1] <- dplyr::mutate(objs[i+1], id=id+lst)
+      nxt <- dfs[i+1][[1]]
+      nxt <- dplyr::mutate(nxt, id=1:nrow(nxt),
+                           id=id+lst)
+
       #bind tables
-      cur <- rbind(cur, objs[i+1])
+      cur <- rbind(cur, nxt)
+
+      #update last number for ids
+      lst <- nrow(cur)
     }
     #return table
     cur
