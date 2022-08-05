@@ -11,7 +11,7 @@
 #' @import shiny Seurat shinyWidgets umap ggplot2 shinydashboard tidyr dplyr shinythemes shinybusy
 #'
 #' @export
-newFISH <- function(mFISH, filter.by=NA, k=NA){
+goFISH <- function(mFISH, filter.by=NA, k=NA){
   #Kaitlin Sullivan November 2020
   #This shiny app allows the naive scientist to browse and visualize analyzed
   #mFISH data in a user-friendly way
@@ -571,6 +571,11 @@ newFISH <- function(mFISH, filter.by=NA, k=NA){
       if(input$rotateS){
         sgplot <- sgplot + coord_flip()
       }
+
+      if(input$groups != "None"){
+        sgplot <- sgplot + facet_wrap(stats::as.formula(paste("~", input$groups, sep = "")))
+      }
+
       sgplot
     })
 
