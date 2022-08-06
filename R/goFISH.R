@@ -2,7 +2,7 @@
 #'
 #' @author Kaitlin E Sullivan
 #'
-#' @param mfish An mFISH object
+#' @param mFISH An mFISH object
 #' @param filter.by A vector of strings or single string value of a gene to filter the data by
 #' @param k A numeric value denoting number of clusters to input
 #'
@@ -16,9 +16,6 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
   #This shiny app allows the naive scientist to browse and visualize analyzed
   #mFISH data in a user-friendly way
 
-
-  # load the known quantified mFISH data
-  mfish <- mFISH
 
   #genes for filtering
   filgenes <- dplyr::select(mFISH@rawData, -id)

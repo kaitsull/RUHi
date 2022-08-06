@@ -12,6 +12,7 @@ License: GPL (>= 3) + file LICENSE
 Imports: 
     testthat,
     shiny,
+    Seurat,
     shinyWidgets,
     umap,
     Rtsne,
