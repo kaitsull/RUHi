@@ -76,9 +76,8 @@ Raw files used for this analysis are directly from FIJI Quantification and can b
 #load package
 library(RUHi)
 
-#set the wd to your file (using an example dataset present within this repo)
-library(here)
-setwd(here("data"))
+#set the working directory using absolute path or here() function
+#or simply provide full path in function
 
 #check out what a function does via:
 #   ?ruMake   (in the console)
@@ -92,7 +91,7 @@ We will use `ruRead()` to read multiple FIJI Quantification files into a single 
 ####### STEP 1a: READING FILES FROM FIJI QUANTIFICATION #########
 #here we are using an example dataset from our 2021 eLife paper - https://elifesciences.org/articles/68967
 
-mydata <- ruRead(getwd(), region = "intermediate", anum = "123456", section = "1")
+mydata <- ruRead("~/RUHi/data", region = "intermediate", anum = "123456", section = "1")
 
 #make sure all your genes are names correctly before continuing
 #you should have columns named X,Y,id,region,section,anum and all of your genes
@@ -112,18 +111,15 @@ head(mydata)
 
 ### 3. Create an [mFISH Object](#mfish-objects)  
 ```{r}
-
-```
-
-
-``` r
-######### STEP 2: CREATE YOUR OBJECT #########
+######### STEP 3: CREATE YOUR OBJECT #########
 #take your individual section or combined dataset and turn it into an mFISH object for analysis
 
-myobj <- ruMake(myobj)
+myobj <- ruMake(mydata)
+```
 
-
-######### STEP 3 VERSION A: "Auto-Analysis" SHINY APP ########
+### Run the Shiny App
+``` r
+######### STEP 4 VERSION A: "Auto-Analysis" SHINY APP ########
 #for a quick analysis overview to get a feel for what variable values will work best, run the shiny app 
 #you will have an option to save your object as a .RDS file, which you can later load into R and run further plotting, analysis, etc on
 
@@ -136,9 +132,12 @@ myobj <- ruMake(myobj)
 # myobj <- readRDS(path/to/object)
 
 #you can then skip straight to the plotting steps - or redo other steps if you want
+```
+  
+### OR Manually Analyze  
 
-
-######### STEP 3 VERSION B: "Manual-Analysis" #########
+```{r}
+######### STEP 4 VERSION B: "Manual-Analysis" #########
 #These steps happen automatically within the Shiny App
 #doing them manually simply gives you more autonomy over the individual steps
 
@@ -158,15 +157,23 @@ myobj <- ruUMAP(myobj)
 #populate metaData with cluster column
 myobj <- ruCluster(myobj, k = 7)
 
+```
 
+
+#### Object storage 
+``` r
 #you can continually re-run these functions until you get an analysis that you are happy with
 #it is HIGHLY SUGGESTED you save your object, this way you can share your data and all of the parameters used to get there
 
 #### SAVE VIA: saveRDS(path, myobj)
 #### READ IN VIA: myobj <- readRDS(path)
 ```
+  
+### 5. Plotting  
 
-``` r
+#### Geographic Space  
+  
+```{r}
 ######### STEP 4: PLOTTING #########
 
 ### GEOGRAPHIC SPACE with plotSpace()
@@ -181,15 +188,22 @@ plotSpace(myobj, colour.by = 'Ctgf', include.fil = F)
 
 #plot in space with separation by cluster (group.by is useful for viewing multiple sections as well)
 plotSpace(obj, group.by = 'cluster', colour.by = 'Ctgf')
-
-
+```
+  
+#### Dimensionally Reduced Space  
+  
+```{r}
 ### DIM REDUCED SPACE with plotDim()
 #auto coloured by cluster
 plotDim(myobj)
 
 #option to colour by gene/metadata 
 plotDim(myobj, colour.by='Ctgf')
-
+```
+  
+#### Gene Expression Box Plots  
+  
+```{r}
 ### MARKER GENE BOX PLOTS
 
 #Plot a gene's expression across clusters
@@ -200,8 +214,9 @@ clusterBoxPlot(obj, clus='5')
 
 #or simply plot the gene expression for every cluster
 clusterBoxPlot(obj)
-
 ```
+  
+
      
 ## mFISH Objects  
   
