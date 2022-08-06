@@ -15,9 +15,9 @@
 #'
 ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
   #save pca
-  pca <- m@attributes$pca
+  pca <- mFISH@attributes$pca
   #run clustering
-  npc <- m@attributes$npc
+  npc <- mFISH@attributes$npc
   hc <- stats::hclust(d = stats::dist(pca[,1:npc], method=dmetric, p=p),
                       method = 'ward.D2')
   #cut tree
@@ -27,7 +27,7 @@ ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
   #update object
   #save the id-cluster combo
   others <-  dplyr::filter(mFISH@rawData, !id %in% filt$id)
-  others <- dplyr::mutate(others, cluster=paste(m@attributes$filter.by, "neg", sep="_"))
+  others <- dplyr::mutate(others, cluster=paste(mFISH@attributes$filter.by, "neg", sep="_"))
   others <- dplyr::select(others, c(id, cluster))
 
   #order by id

@@ -29,14 +29,16 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
 
   #exclude id values from norm/pca
   ids <- dplyr::select(df, id)
-  #df <- dplyr::select(df, -id)
+  df <- dplyr::select(df, -id)
 
   #remove 0 value
   if(remove.outliers){
     print("Removing outliers...")
     #find cells with number of features outside of threshold
     df<-dplyr::mutate(df, nfts =rowSums(df>0))
+    df <- dplyr::mutate(df, id=ids$id)
     ids <- dplyr::mutate(ids, nfts=df$nfts)
+
     #low/high
     df<-dplyr::filter(df, nfts>outlier.thresh[1])
     df<-dplyr::filter(df, nfts<outlier.thresh[2])
@@ -60,6 +62,7 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
 
   print("Running PCA...")
   #run a pca
+  df <- dplyr::select(df, -id)
   pca <- stats::prcomp(df, center = T, scale = T)
 
   #save the data
@@ -79,6 +82,11 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
   b <- rbind(fils, others)
   b <- dplyr::arrange(b, id)
   mFISH@metaData <- dplyr::mutate(mFISH@metaData, fil = b$fil)
+
+
+  #save w ids
+  df <- dplyr::mutate(df, id = ids$id)
+  mFISH@filteredData <- df
 
   #return object
   mFISH

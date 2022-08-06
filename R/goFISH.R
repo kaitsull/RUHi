@@ -383,6 +383,7 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
 
         #normalize
         mp <- sweep(mp, 1,apply(mp, 1, sum), "/")
+        mp <- mp*(100)
 
         #remove nas
         mp <- dplyr::mutate(mp, id=ids)
