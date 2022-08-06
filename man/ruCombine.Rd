@@ -7,7 +7,7 @@
 ruCombine(dfs)
 }
 \arguments{
-\item{dfs}{A vector of dataframes (from \code{ruRead()})}
+\item{dfs}{A list of dataframes (from \code{ruRead()} using \code{list(df1,df2,df3)})}
 }
 \value{
 A combined dataframe.
