@@ -9,12 +9,14 @@
 #' @return A box plot showing gene expression per cluster
 #' @export
 #'
-#' @import ggplot2 dplyr tidyr
+#' @import ggplot2 dplyr tidyr grDevices
 clusterBoxPlot <- function(mFISH, clus = "all", metadata = "genes"){
   #save data
-  fdf <- m@filteredData
-  md <- m@metaData
+  fdf <- mFISH@filteredData
+  md <- mFISH@metaData
   md <- dplyr::filter(md, fil == T)
+
+  l <- length(names(fdf))-1
 
   #add md
   #add md
@@ -37,7 +39,8 @@ clusterBoxPlot <- function(mFISH, clus = "all", metadata = "genes"){
     geom_boxplot(outlier.shape = NA)+
     theme_classic()+
     labs(y="Expression", x="")+
-    facet_wrap(~cluster)
+    facet_wrap(~cluster)+
+    scale_fill_manual(values = rainbow(l))
 
 
   gp

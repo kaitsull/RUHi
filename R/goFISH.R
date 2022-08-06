@@ -8,7 +8,7 @@
 #'
 #' @return Launch Gone mFISHing shiny app
 #'
-#' @import shiny Seurat shinyWidgets umap ggplot2 shinydashboard tidyr dplyr shinythemes shinybusy
+#' @import grDevices shiny Seurat shinyWidgets umap ggplot2 shinydashboard tidyr dplyr shinythemes shinybusy
 #'
 #' @export
 goFISH <- function(mFISH, filter.by=NA, k=NA){

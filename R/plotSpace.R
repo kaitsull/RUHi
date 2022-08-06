@@ -15,12 +15,22 @@ plotSpace <- function(mFISH, colour.by="cluster",
                       size = 0.9, cols=NA, include.fil=T, group.by=NA){
 
   #save object
-  df <- mFISH@rawData
+  df <- mFISH@filteredData
   md <- mFISH@metaData
+  mdf <- dplyr::filter(md, fil==T)
   df <- merge(df, md)
+  # df <- dplyr::mutate(df, X=mdf$X, Y=mdf$Y, region=mdf$region,
+  #                     section=mdf$section, anum=mdf$anum, cluster=mdf$cluster)
+  #
+  # others <- names(dplyr::select(df, -c(id,X,Y,section,region,anum,cluster)))
+  # if(length(others)>0){
+  #   for(i in length(others)){
+  #     df <- dplyr::mutate(df, !!rlang::sym(others[i])=)
+  #   }
+  # }
 
   fil.df <- dplyr::filter(df, fil==T)
-  bg <- dplyr::select(df, -cluster)
+  bg <- dplyr::mutate(mFISH@rawData, X=md$X, Y=md$Y)
 
 
 

@@ -14,7 +14,9 @@ plotDim <- function(mFISH, colour.by="cluster", size = 0.9, cols=NA){
   #save umap object
   df <- mFISH@attributes$umap
   met <- dplyr::filter(mFISH@metaData, fil==T)
+  data <- mFISH@filteredData
   uplot <- dplyr::mutate(met, UMAP_1 = df$UMAP_1, UMAP_2=df$UMAP_2)
+  uplot <- merge(uplot, data)
 
   #baseplot
   p <- ggplot2::ggplot(uplot, aes_string(x="UMAP_1", y="UMAP_2", colour=colour.by))+
@@ -22,19 +24,21 @@ plotDim <- function(mFISH, colour.by="cluster", size = 0.9, cols=NA){
     geom_point(size=size)
 
   #baseline colours
-  if(class(colour.by)=='numeric'){
-    p <- p + scale_colour_gradientn(values=c("cyan", "red"))
+  if(class(uplot[[colour.by]])=='numeric'){
+    p <- p + scale_colour_gradientn(colours=c("cyan", "red"))
   }
 
+  #print(class(uplot[[colour.by]]))
   #others
   if(!is.na(cols)){
-    if(class(colour.by)=='numeric'){
-      p <- p + scale_colour_gradientn(values=cols)
+    if(class(df[[colour.by]])=='numeric'){
+      p <- p + scale_colour_gradientn(colours=cols)
     }
     else{
       p <- p + scale_colour_manual(values=cols)
     }
   }
+
   #print plot
   p
 }
