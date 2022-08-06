@@ -16,7 +16,7 @@ clusterBoxPlot <- function(mFISH, clus = "all", metadata = "genes"){
   md <- mFISH@metaData
   md <- dplyr::filter(md, fil == T)
 
-  l <- length(names(fdf))-1
+  len <- length(names(fdf))-1
 
   #add md
   #add md
@@ -40,7 +40,7 @@ clusterBoxPlot <- function(mFISH, clus = "all", metadata = "genes"){
     theme_classic()+
     labs(y="Expression", x="")+
     facet_wrap(~cluster)+
-    scale_fill_manual(values = rainbow(l))
+    scale_fill_manual(values = rainbow(len))
 
 
   gp
