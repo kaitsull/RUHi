@@ -18,6 +18,7 @@ exciting features such as *integration with scRNA-seq data*\!
 
 ## Installation
 
+This repo contains the developer's version of RUHi.  
 You can install RUHi from this github repo with:
 
 ``` r
@@ -30,9 +31,28 @@ Once installed, load the package normally:
 library(RUHi)
 ```
 
+If you are updating to a newer version of the repo:  
+
+``` r  
+#remove old version
+remove.packages(RUHi)  
+
+#reinstall from here or from the cembrowskilab/RUHi github  
+devtools::install_github("kaitsull/RUHi")  
+```
+  
+## The mFISH Object  
+  
+`RUHi` makes use of an `mFISH Object` that encapsulates the many stages of one's analysis for easy reproducibility.  
+The `mFISH Object` contains 4 main elements:  
+  - `@rawData`: _A data frame containing unfiltered non-normalized data_
+  - `@filteredData`: _A data frame containing filtered and normalized data_
+  - `@metaData`: _A data frame containing metadata for each cell_
+  - `@attributes`: _A list containing all of the analysis values utilized_
+  
 ## Function List
 
-Currently the package has 2 functions:
+Currently the package has **7 core functions**, **4 plotting functions**, and a **Shiny App deployment function**:
 
 ### `ruMAKE`
 
