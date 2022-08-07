@@ -7,11 +7,11 @@
 goFISH(mFISH, filter.by = NA, k = NA)
 }
 \arguments{
+\item{mFISH}{An mFISH object}
+
 \item{filter.by}{A vector of strings or single string value of a gene to filter the data by}
 
 \item{k}{A numeric value denoting number of clusters to input}
-
-\item{mfish}{An mFISH object}
 }
 \value{
 Launch Gone mFISHing shiny app

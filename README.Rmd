@@ -1,8 +1,5 @@
 ---
-output: 
-  github_document:
-    toc: true
-    toc_float: true
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -67,7 +64,7 @@ devtools::install_github("kaitsull/RUHi")
 
 ### 1. Setting up  
 We will be using a single section dataset from [our eLife paper](https://elifesciences.org/articles/68967)  
-Raw files used for this analysis are directly from FIJI Quantification and can be found in [this repo](https://github.com/kaitsull/RUHi/tree/master/data).  
+Raw files used for this analysis are directly from FIJI Quantification and can be found in [this repo](https://github.com/kaitsull/RUHi/tree/master/inst/extdata).  
 
 ```{r, warning=FALSE}
 # Kaitlin Sullivan 2022
@@ -91,7 +88,7 @@ We will use `ruRead()` to read multiple FIJI Quantification files into a single 
 ####### STEP 1a: READING FILES FROM FIJI QUANTIFICATION #########
 #here we are using an example dataset from our 2021 eLife paper - https://elifesciences.org/articles/68967
 
-mydata <- ruRead("~/RUHi/data", region = "intermediate", anum = "123456", section = "1")
+mydata <- ruRead("~/RUHi/inst/extdata", region = "intermediate", anum = "123456", section = "1")
 
 #make sure all your genes are names correctly before continuing
 #you should have columns named X,Y,id,region,section,anum and all of your genes
@@ -106,7 +103,7 @@ head(mydata)
 #if you have multiple sections you can save multiple experiments as a data.frame using ruRead()
 #to combine them use: 
 
-# combo <- ruCombine(c(data1, data2, data3))
+combo <- ruCombine(c(data1, data2, data3))
 ```
 
 ### 3. Create an [mFISH Object](#mfish-objects)  
@@ -125,11 +122,11 @@ myobj <- ruMake(mydata)
 
 #you have optional time-saving arguments that can pre-select the filtering value and number of clusters prior to running the app
 
-#goFISH(myobj, filter.by = 'Slc17a7', k = 7)
+goFISH(myobj, filter.by = 'Slc17a7', k = 5)
 
 #when you are happy with the way your analysis looks, press "Download Object"
 #to read back in your saved .RDS file, simply use:
-# myobj <- readRDS(path/to/object)
+myobj <- readRDS(path/to/object)
 
 #you can then skip straight to the plotting steps - or redo other steps if you want
 ```
@@ -155,7 +152,7 @@ myobj <- ruUMAP(myobj)
 
 ### CLUSTER 
 #populate metaData with cluster column
-myobj <- ruCluster(myobj, k = 7)
+myobj <- ruCluster(myobj, k = 5)
 
 ```
 
@@ -187,7 +184,7 @@ plotSpace(myobj, group.by = 'cluster')
 plotSpace(myobj, colour.by = 'Ctgf', include.fil = F)
 
 #plot in space with separation by cluster (group.by is useful for viewing multiple sections as well)
-plotSpace(obj, group.by = 'cluster', colour.by = 'Ctgf')
+plotSpace(myobj, group.by = 'cluster', colour.by = 'Ctgf')
 ```
   
 #### Dimensionally Reduced Space  
@@ -207,13 +204,13 @@ plotDim(myobj, colour.by='Ctgf')
 ### MARKER GENE BOX PLOTS
 
 #Plot a gene's expression across clusters
-geneBoxPlot(obj, 'Ctgf')
+geneBoxPlot(myobj, 'Ctgf')
 
 #Plot the gene expression profile of a specified cluster
-clusterBoxPlot(obj, clus='5')
+clusterBoxPlot(myobj, clus='5')
 
 #or simply plot the gene expression for every cluster
-clusterBoxPlot(obj)
+clusterBoxPlot(myobj)
 ```
   
 
@@ -228,7 +225,7 @@ The `mFISH Object` contains 4 main elements:
   - `@metaData`: _A data frame containing metadata for each cell_  
   - `@attributes`: _A list containing all of the analysis values utilized_  
   
-![](data/mFISH.png)  
+![](inst/extdata/mFISH.png)  
 
 
 Each core function within the package interacts with the elements of the object so you don't have to.  
