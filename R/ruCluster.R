@@ -27,7 +27,7 @@ ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
   #update object
   #save the id-cluster combo
   others <-  dplyr::filter(mFISH@rawData, !id %in% filt$id)
-  others <- dplyr::mutate(others, cluster=paste(mFISH@attributes$filter.by, "neg", sep="_"))
+  others <- dplyr::mutate(others, cluster=NA)
   others <- dplyr::select(others, c(id, cluster))
 
   #order by id
@@ -42,6 +42,7 @@ ruCluster <- function(mFISH, k, dmetric = "euclidean", p = 2){
   mFISH@attributes$hclust_k <- k
   mFISH@attributes$hclust_metric <- dmetric
   mFISH@attributes$hclust_p <- p
+  mFISH@attributes$cluster <- as.factor(clus)
 
   #return object
   mFISH
