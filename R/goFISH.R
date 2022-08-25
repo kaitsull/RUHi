@@ -11,7 +11,7 @@
 #' @import grDevices shiny Seurat shinyWidgets umap ggplot2 shinydashboard tidyr dplyr shinythemes shinybusy
 #'
 #' @export
-goFISH <- function(mFISH, filter.by=NA, k=NA){
+goFISH <- function(mFISH, filter.by=NA, k=NA, remove.outliers=F){
   #Kaitlin Sullivan November 2020
   #This shiny app allows the naive scientist to browse and visualize analyzed
   #mFISH data in a user-friendly way
@@ -20,6 +20,8 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
   #genes for filtering
   filgenes <- dplyr::select(mFISH@rawData, -id)
   filgenes <- names(filgenes)
+  #inclusion of "none" variable - default - no fil
+  filgenes <- c("None", filgenes)
 
   #raw data
   raw <- mFISH@rawData
@@ -37,9 +39,6 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
     inclus <- k
   }
 
-  if(!filter.by %in% filgenes){
-    warning("Selected filter.by gene is not present in mFISH object.")
-  }
 
 
   #groupings
@@ -295,10 +294,10 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
 #REACTIVE MISC
 #reactive gene name list
     mygenes <- shiny::reactive({
-      mygenes <- filgenes
-      if(input$mg %in% filgenes){
-        colNum <- match(input$mg, filgenes)
-        mygenes <- filgenes[-colNum]
+      mygenes <- filgenes[-1]
+      if(input$mg %in% mygenes){
+        colNum <- match(input$mg, mygenes)
+        mygenes <- mygenes[-colNum]
       }
       mygenes
     })
@@ -314,7 +313,7 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
                       umap_nn = input$nn, umap_mindist = input$mindist,
                       umap_metric = input$metric, hclust_k = input$nclus,
                       hclust_metric = 'manhattan', pca = pca(),
-                      npc = input$npcs, umap = mu())
+                      npc = input$npcs, umap = mu(), cluster = mc)
 
        if(input$out){
          attribs$remove.outliers <- c(1, length(mygenes()))
@@ -357,11 +356,17 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
         mf <- raw
 
         #for loop filtering out all genes
-        l <- length(input$mg)
-        for(i in 1:l){
-          mf <- dplyr::filter(mf, !!rlang::sym(input$mg[i]) > input$filter)
-          mf <- dplyr::select(mf, -(!!rlang::sym(input$mg[i])))
+        if(input$mg != "None"){
+          l <- length(input$mg)
+          for(i in 1:l){
+            if(input$mg == "None"){
+              next
+            }
+            mf <- dplyr::filter(mf, !!rlang::sym(input$mg[i]) > input$filter)
+            mf <- dplyr::select(mf, -(!!rlang::sym(input$mg[i])))
+          }
         }
+
 
         #mf <- RUHi::ruFilter(mfish, threshold=input$filter,
                              #filter.by = input$mg)
@@ -494,7 +499,7 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
         inid <- dplyr::mutate(inid, cluster=mc())
         #save full data
         outid <- dplyr::filter(meta, !id %in% inid$id)
-        outid <- dplyr::mutate(outid, cluster=paste(input$filter.by, "neg", sep="_"))
+        outid <- dplyr::mutate(outid, cluster=NA)
         outid <- dplyr::select(outid, c(id, cluster))
 
         #bind together
