@@ -11,7 +11,7 @@
 #' @import grDevices shiny Seurat shinyWidgets umap ggplot2 shinydashboard tidyr dplyr shinythemes shinybusy
 #'
 #' @export
-goFISH <- function(mFISH, filter.by=NA, k=NA, remove.outliers=F){
+goFISH <- function(mFISH, filter.by=NA, k=NA){
   #Kaitlin Sullivan November 2020
   #This shiny app allows the naive scientist to browse and visualize analyzed
   #mFISH data in a user-friendly way
