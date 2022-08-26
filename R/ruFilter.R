@@ -17,7 +17,7 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
   df <- mFISH@rawData
   #filter by list
   #warning if nothing to filter by
-  if(is.na(filter.by[1]) && is.na(exclude)){
+  if(is.na(filter.by[1]) && is.na(exclude[1])){
     warning("Please select a gene or vector of genes to filter the data by or exclude from analysis!")
   }
   else{
@@ -37,7 +37,7 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
         df <- dplyr::select(df, -(!!rlang::sym(filter.by[i])))
       }
     }
-    if(!is.na(exclude)){
+    if(!is.na(exclude[1])){
       print("Running gene exclusions...")
       l <- length(exclude)
       for(i in 1:l){
