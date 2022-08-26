@@ -30,7 +30,7 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
 
   #remove warnings
   if(length(filter.by)==1){
-    if(is.na(filter.by)){
+    if(is.na(filter.by[1])){
       filter.by <- filgenes[1]
     }
   }
