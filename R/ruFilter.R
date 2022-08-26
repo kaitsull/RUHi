@@ -21,9 +21,9 @@ ruFilter <- function(mFISH, threshold = 0.1, filter.by = NA, exclude = NA){
     warning("Please select a gene or vector of genes to filter the data by or exclude from analysis!")
   }
   else{
-    #change this to include a list of thresholds?????
-    if(!is.na(filter.by)){
-      l <- length(filter.by)
+    #only run if length > 1
+    l <- length(filter.by)
+    if(!is.na(filter.by[1])){
       #filter each gene and remove from dataframe
       for (i in 1:l) {
         print(paste("Filtering data by ", filter.by[i], " at threshold of ", threshold, "...", sep=""))
