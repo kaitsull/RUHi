@@ -20,13 +20,13 @@ exciting features such as *integration with scRNA-seq data*!
 
 i.      [Installation](#installation)  
 ii.     [Tutorial](#tutorial)  
-        1.      [Setting Up](#setting-up)  
-        2.      [Reading the Data](#reading-the-data)  
-        3.      [Create an mFISH Object](#create-an-mfish-object)  
-        4.      [Go FISH!](#preview-your-analysis)  
-        5.      [Run the Analysis](#run-the-analysis)  
-        6.      [Visualizing](#plotting)   
-        7.      [Saving your Data](#object-storage)  
+        -       [1. Setting Up](#setting-up)  
+        -       [2. Reading the Data](#reading-the-data)  
+        -       [3. Create an mFISH Object](#create-an-mfish-object)  
+        -       [4. Go FISH!](#preview-your-analysis)  
+        -       [5. Run the Analysis](#run-the-analysis)  
+        -       [6. Visualizing](#plotting)   
+        -      [7. Saving your Data](#object-storage)  
 iii.    [Function List](#functions)  
 
 ## Installation
