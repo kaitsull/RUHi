@@ -18,9 +18,16 @@ exciting features such as *integration with scRNA-seq data*!
 
 ## Table of Contents:
 
-1.  [Installation](#installation)  
-2.  [Tutorial](#tutorial)
-3.  [Function List](#functions)
+i.  [Installation](#installation)  
+ii.  [Tutorial](#tutorial)
+        1.  [Setting Up](#setting-up)  
+        2.  [Reading the Data](#reading-the-data)  
+        3.  [Create an mFISH Object](#create-an-mfish-object)  
+        4.  [Go FISH!](#preview-your-analysis)  
+        5.  [Run the Analysis](#run-the-analysis)  
+        6.  [Visualizing](#plotting)   
+        7.  [Saving your Data](#object-storage)  
+iii.  [Function List](#functions)  
 
 ## Installation
 
@@ -49,7 +56,7 @@ devtools::install_github("kaitsull/RUHi")
 
 ## Tutorial
 
-### 1. Setting up
+### 1. Setting Up
 
 We will be using a single section dataset from [our 2021 eLife
 paper](https://elifesciences.org/articles/68967).  
