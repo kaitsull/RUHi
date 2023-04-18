@@ -18,7 +18,7 @@ ruUMAP <- function(mFISH, metric="manhattan", nn=15, min.dist=0.1, npc=1){
     #auto generate npcs
     if(npc <= 1){
       l <- length(names(mFISH@filteredData))
-      npc <- (l/2)-1
+      npc <- round((l/2)-1)
     }
 
     #run on PCA
