@@ -57,7 +57,7 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
 
   #normalize to PAC
   print("Normalizing the data...")
-  nms <- length(names(df))-1
+  nms <- length(names(df))
   nmslist <- names(df)
   for(i in 1:nms){
     curmax <- max(df[,i])

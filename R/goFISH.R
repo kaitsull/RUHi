@@ -108,7 +108,7 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
                             sliderInput(
                           "npcs",
                           "Number of Principle Components to use:",
-                          min = 3,
+                          min = 2,
                           max = length(filgenes)-1,
                           value = (length(filgenes)/2)-1,
                           step = 1
@@ -384,8 +384,14 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
         mp <- dplyr::select(mp, -id)
 
         #normalize
-        mp <- sweep(mp, 1,apply(mp, 1, sum), "/")
-        mp <- mp*(100)
+        nms <- length(names(mp))
+        nmslist <- names(mp)
+        for(i in 1:nms){
+          curmax <- max(mp[,i])
+          mp <- dplyr::mutate(mp, !!nmslist[i] := (!!rlang::sym(nmslist[i])/curmax)*100)
+        }
+        #mp <- sweep(mp, 1,apply(mp, 1, sum), "/")
+        #mp <- mp*(100)
 
         #remove nas
         mp <- dplyr::mutate(mp, id=ids)
