@@ -51,9 +51,18 @@ ruProcess <- function(mFISH, remove.outliers=F, outlier.thresh=c(1,11)){
   }
 
   #normalize to PAC
-  print("Normalizing data...")
-  df <- sweep(df, 1,apply(df, 1, sum), "/")
-  df <- df*(100)
+  #print("Normalizing data...")
+  #df <- sweep(df, 1,apply(df, 1, sum), "/")
+  #df <- df*(100)
+
+  #normalize to PAC
+  print("Normalizing the data...")
+  nms <- length(names(df))-1
+  nmslist <- names(df)
+  for(i in 1:nms){
+    curmax <- max(df[,i])
+    df <- dplyr::mutate(df, !!nmslist[i] := (!!rlang::sym(nmslist[i])/curmax)*100)
+  }
 
   #remove NAs
   df <- dplyr::mutate(df, id = ids$id)
