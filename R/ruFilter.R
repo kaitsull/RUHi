@@ -1,6 +1,7 @@
-#' Select features and filter your mFISH object by a given gene
-#'
+#' mFISH Data Filtering
 #' @author Kaitlin E Sullivan
+#'
+#' @description Filter data for a cell type of choice, plus exclude any non-expressing genes here. To be used after `ruMake` and before `ruProcess`.
 #'
 #' @param mFISH An mFISH object
 #' @param threshold A numeric value to threshold the gene by

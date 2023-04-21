@@ -1,11 +1,14 @@
-#' Plot spatial location of cells coloured by metadata
+#' mFISH Plotting Cells in Native Tissue
+#' @author Kaitlin E Sullivan
 #'
-#' @param mFISH An mFISH object
+#' @description Plot cells in their original X,Y coordinates. Colour according to gene expression or metadata.
+#'
+#' @param mFISH An mFISH object that has undergone all analysis steps.
 #' @param colour.by A metadata variable to colour by
 #' @param size Point size
 #' @param cols Vector of colours
 #' @param include.fil Logical allowing for filtered cells to appear in grey
-#' @param group.by A variable to separate plots by (eg: section or anum to view individual slices)
+#' @param group.by A variable to separate plots by (eg: section or anum to view individual slices or animals)
 #'
 #' @return A ggplot showing cells in native space!
 #' @export
@@ -66,6 +69,10 @@ plotSpace <- function(mFISH, colour.by="cluster",
   #facetwrap
   if(!is.na(group.by)){
     p <- p + facet_wrap(stats::as.formula(paste("~", group.by, sep = "")))
+  }
+  #check if more than one section
+  if(length(unique(md$section))>1){
+    p <- p+facet_wrap(~section)
   }
 
   #print plot

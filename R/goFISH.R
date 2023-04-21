@@ -1,6 +1,7 @@
-#' Launches the Gone mFISHing shiny app
-#'
+#' Gone mFISHing
 #' @author Kaitlin E Sullivan
+#'
+#' @description Launch a Shiny app for code-free analysis of mFISH data.
 #'
 #' @param mFISH An mFISH object
 #' @param filter.by A vector of strings or single string value of a gene to filter the data by
@@ -11,9 +12,9 @@
 #' @import grDevices shiny Seurat shinyWidgets umap ggplot2 shinydashboard tidyr dplyr shinythemes shinybusy
 #'
 #' @export
-goFISH <- function(mFISH, filter.by=NA, k=NA){
+goFISH <- function(mFISH, filter.by=NA, k=NA, norm="PAC"){
   #Kaitlin Sullivan November 2020
-  #This shiny app allows the naive scientist to browse and visualize analyzed
+  #This shiny app allows the code-free scientist to browse and visualize analyzed
   #mFISH data in a user-friendly way
 
 
@@ -384,14 +385,19 @@ goFISH <- function(mFISH, filter.by=NA, k=NA){
         mp <- dplyr::select(mp, -id)
 
         #normalize
-        nms <- length(names(mp))
-        nmslist <- names(mp)
-        for(i in 1:nms){
-          curmax <- max(mp[,i])
-          mp <- dplyr::mutate(mp, !!nmslist[i] := (!!rlang::sym(nmslist[i])/curmax)*100)
+        if(norm == "PAC"){
+          mp <- sweep(mp, 1,apply(mp, 1, sum), "/")
+          mp <- mp*(100)
         }
-        #mp <- sweep(mp, 1,apply(mp, 1, sum), "/")
-        #mp <- mp*(100)
+        if(norm !="PAC"){
+          nms <- length(names(mp))
+          nmslist <- names(mp)
+          for(i in 1:nms){
+            curmax <- max(mp[,i])
+            mp <- dplyr::mutate(mp, !!nmslist[i] := (!!rlang::sym(nmslist[i])/curmax)*100)
+          }
+        }
+
 
         #remove nas
         mp <- dplyr::mutate(mp, id=ids)
