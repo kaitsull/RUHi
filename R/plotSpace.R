@@ -33,7 +33,7 @@ plotSpace <- function(mFISH, colour.by="cluster",
   # }
 
   fil.df <- dplyr::filter(df, fil==T)
-  bg <- dplyr::mutate(mFISH@rawData, X=md$X, Y=md$Y)
+  bg <- mFISH@metaData
 
 
 
@@ -67,13 +67,17 @@ plotSpace <- function(mFISH, colour.by="cluster",
   }
 
   #facetwrap
-  if(!is.na(group.by)){
-    p <- p + facet_wrap(stats::as.formula(paste("~", group.by, sep = "")))
-  }
-  #check if more than one section
   if(length(unique(md$section))>1){
     p <- p+facet_wrap(~section)
   }
+  if(!is.na(group.by)){
+    p <- p + facet_wrap(stats::as.formula(paste("~", group.by, sep = "")))
+    #check if more than one section
+    if(length(unique(md$section))>1){
+      p <- p+facet_wrap(stats::as.formula(paste("~", c(group.by, "section"), sep = "")))
+    }
+  }
+
 
   #print plot
   p

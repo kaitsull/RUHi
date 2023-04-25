@@ -42,7 +42,7 @@ plotVar <- function(mFISH, metric="variance", include.auto=T){
     if(sum$`Cumulative Proportion`[1]+sum$`Cumulative Proportion`[2]>0.9){
       df <- sum[1:2,]
     }else{
-      df <- dplyr::filter(sum, `Cumulative Proportion`<0.85)
+      df <- dplyr::filter(sum, `Cumulative Proportion`<0.95)
     }
     #save autoselected pcs
     npcs <- nrow(df)

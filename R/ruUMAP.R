@@ -25,7 +25,7 @@ ruUMAP <- function(mFISH, metric="manhattan", nn=15, min.dist=0.1, npc="auto"){
       if(sum$`Cumulative Proportion`[1]+sum$`Cumulative Proportion`[2]>0.9){
         pcs <- sum[1:2,]
       }else{
-        pcs <- dplyr::filter(sum, `Cumulative Proportion`<0.85)
+        pcs <- dplyr::filter(sum, `Cumulative Proportion`<0.95)
       }
       #save autoselected pcs
       npc <- nrow(pcs)
