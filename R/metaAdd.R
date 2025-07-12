@@ -9,11 +9,6 @@
 #'
 #' @return mFISH object with updated metadata.
 #'
-#' @examples
-#' #using output from analyzeDistance function
-#' my_obj <- metaAdd(mfish_object = my_obj, metadata_to_add = coordsSection_7, metadata_variables_to_add = "distance_along_boundary")
-#' #using other new metadata
-#' my_obj <- metaAdd(mfish_object = my_obj, metadata_to_add = newMetadata, metadata_variables_to_add = "my_variable")
 #' @export
 
 metaAdd <- function(mfish_object,

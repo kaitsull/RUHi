@@ -13,8 +13,6 @@
 #'
 #' @import ggplot2
 #'
-#' @examples
-#' section7data <- analyzeDistance('section7', coord_data = coordsSection_7)
 #' @export
 
 analyzeDistance <- function(SectionName,

@@ -12,8 +12,6 @@
 #'
 #' @import ggplot2
 #'
-#' @examples
-#' coordsSection_7 <- getCoords(original_mfish_obj = mfish, section_id = "7", rotate_coords = T, theta_deg = 55)
 #' @export
 
 getCoords <- function(original_mfish_obj,
