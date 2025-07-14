@@ -22,6 +22,12 @@ exciting features such as *integration with scRNA-seq data*!
 2.  [Tutorial](#tutorial)
 3.  [Function List](#functions)
 
+
+## Video Tutorial Hub:
+Click the image below to visit the mFISH Tutorial Hub, complete with comprehensive video tutorials!!!
+[![](https://raw.githubusercontent.com/kaitsull/VideoTutorials/refs/heads/main/images/Tutorial.png)](https://kaitsull.github.io/VideoTutorials/)
+
+
 ## Installation
 
 This repo contains the developer’s version of RUHi.  
