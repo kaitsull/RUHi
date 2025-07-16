@@ -5,6 +5,9 @@
 
 #### R-based Utilities for HiPlex
 
+##### AUTHOR: [Kaitlin Sullivan](https://github.com/kaitsull) (UBC) _2019-2025_ 
+##### TECHNICAL CONTACT & CONTRIBUTER: [Margo Kapustina](https://github.com/MargoKapustina) (UBC) _2025-Present_ 
+
 <!-- badges: start -->
 
 [![Lifecycle:
