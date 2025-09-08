@@ -9,7 +9,7 @@
 ##### TECHNICAL CONTACT & CONTRIBUTER: [Margo Kapustina](https://github.com/MargoKapustina) (UBC) _2025-Present_ 
 
 <!-- badges: start -->
-
+[![DOI](https://zenodo.org/badge/506418513.svg)](https://doi.org/10.5281/zenodo.17080222) 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN
