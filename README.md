@@ -16,8 +16,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://www.r-pkg.org/badges/version/RUHi)](https://CRAN.R-project.org/package=RUHi)
 <!-- badges: end -->
 
-The goal of RUHi is to analyze and visualize mFISH! Stay tuned for
-exciting features such as *integration with scRNA-seq data*!
+The goal of RUHi is to analyze and visualize mFISH! See our recent **[STAR Protocols](https://www.sciencedirect.com/science/article/pii/S2666166725005337)** publication for more!
 
 ## Table of Contents:
 
